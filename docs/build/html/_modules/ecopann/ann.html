@@ -1,0 +1,748 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ecopann.ann &mdash; ECoPANN 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> ECoPANN
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickStart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../package_reference.html">Package Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ECoPANN</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>ecopann.ann</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ecopann.ann</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">data_simulator</span> <span class="k">as</span> <span class="n">ds</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">space_updater</span> <span class="k">as</span> <span class="n">su</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">cosmic_params</span><span class="p">,</span> <span class="n">plotter</span><span class="p">,</span> <span class="n">evaluate</span>
+<span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="c1">#%% ANN</span>
+<div class="viewcode-block" id="ANN"><a class="viewcode-back" href="../../parameter_estimation.html#ecopann.ann.ANN">[docs]</a><span class="k">class</span> <span class="nc">ANN</span><span class="p">(</span><span class="n">plotter</span><span class="o">.</span><span class="n">Plotters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Estimating (cosmological) parameters with Artificial Neural Network.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array-like or list</span>
+<span class="sd">        The observational spectra (data) with shape (spectra_length,3), or a list of spectra with shape [(spectra_length_1,3), (spectra_length_2,3), ...].</span>
+<span class="sd">        The first column is the observational variable, the second column is the best values of the measurement, </span>
+<span class="sd">        and the third column is the error of the measurement.</span>
+<span class="sd">    cosmic_model : cosmological (or theoretical) model instance</span>
+<span class="sd">        A cosmological (or theoretical) model instance that is used to simulate training set,</span>
+<span class="sd">        it should contains a &#39;simulate&#39; method, and &#39;simulate&#39; should accept input of cosmological parameters,</span>
+<span class="sd">        if you use the local data sets, it should also contain &#39;load_params&#39; and &#39;load_sample&#39; methods.</span>
+<span class="sd">    param_names : list</span>
+<span class="sd">        A list which contains the parameter names, e.g. [&#39;H0&#39;,&#39;Omega_m&#39;,&#39;ombh2&#39;,&#39;omch2&#39;,&#39;tau&#39;,&#39;As&#39;,&#39;ns&#39;].</span>
+<span class="sd">    params_dict : dict or None, optional</span>
+<span class="sd">        Information of cosmological parameters that include the labels, the base values, the minimum values, </span>
+<span class="sd">        and the maximum values. See :func:`~.cosmic_params.params_dict_zoo`. Default: None</span>
+<span class="sd">    cov_matrix : array-like, list, or None, optional</span>
+<span class="sd">        Covariance matrix of the observational data. It should be an array with shape (spectra_length, spectra_length), </span>
+<span class="sd">        or a list of covariance matrix with shape [(spectra_length_1, spectra_length_1), (spectra_length_2, spectra_length_2), ...].</span>
+<span class="sd">        If there is no covariance for some observations, the covariance matrix should be set to None. e.g. [cov_matrix_1, None, cov_matrix_3]. Default: None</span>
+<span class="sd">    init_params : array-like, optional</span>
+<span class="sd">        The initial settings of the parameter space. Default: None</span>
+<span class="sd">    hidden_layer : int, optional</span>
+<span class="sd">        The number of the hidden layer of the network (for a single branch network). Default: 3</span>
+<span class="sd">    branch_hiddenLayer : int, optional</span>
+<span class="sd">        The number of the hidden layer for the branch part of the network (for a multibranch network). Default: 2</span>
+<span class="sd">    trunk_hiddenLayer : int, optional</span>
+<span class="sd">        The number of the hidden layer for the trunk part of the network (for a multibranch network). Default: 1</span>
+<span class="sd">    epoch : int, optional</span>
+<span class="sd">        The number of epoch of the training process. Default: 2000</span>
+<span class="sd">    epoch_branch : int, optional</span>
+<span class="sd">        The number of epoch of the training process (for the branch part of the multibranch network). Default: 2000</span>
+<span class="sd">    num_train : int, optional</span>
+<span class="sd">        The number of samples of the training set. Default: 3000</span>
+<span class="sd">    local_samples : None, str, or list, optional</span>
+<span class="sd">        Path of local samples, None, or &#39;sample&#39; or [&#39;sample&#39;] or [&#39;sample_1&#39;, &#39;sample_2&#39;, ...].</span>
+<span class="sd">        If None, no local samples are used. Default: None</span>
+<span class="sd">    steps_n : int, optional</span>
+<span class="sd">        The number of steps of the training process. Default: 10</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hp_model : str, optional</span>
+<span class="sd">        Hyperparameter model that contains hyperparameters (such as activation function, batch normalization, dropout, etc.) used in the network.</span>
+<span class="sd">        It can be &#39;eco_1&#39;, &#39;eco_2&#39;, &#39;eco_3&#39;, &#39;eco_4&#39;, &#39;eco_5&#39;, &#39;eco_6&#39;, or &#39;eco_7&#39; (see :func:`~.hpmodel.models`). Default: &#39;eco_3&#39;</span>
+<span class="sd">    lr : float, optional</span>
+<span class="sd">        The learning rate setting of the network. Default: 1e-2</span>
+<span class="sd">    lr_min : float, optional</span>
+<span class="sd">        The minimum of the learning rate. Default: 1e-8</span>
+<span class="sd">    batch_size : int, optional</span>
+<span class="sd">        The batch size setting of the network. Default: 750</span>
+<span class="sd">    auto_batchSize : bool, optional</span>
+<span class="sd">        If True, the batch size will be set automatically in the training process, otherwise, use the setting of ``batch_size``. Default: True</span>
+<span class="sd">    auto_epoch : bool, optional</span>
+<span class="sd">        If True, the epoch will be set automatically in the training process, otherwise, use the setting of ``epoch``. Default: True</span>
+<span class="sd">    base_N_max : int, optional</span>
+<span class="sd">        The maximum value of the basic (or minimum) number of data to be simulated, which works only when ``auto_N`` is set to True. Default: 1500</span>
+<span class="sd">    auto_N : bool, optional</span>
+<span class="sd">        If True, the number of samples in the training set will be set automatically, otherwise, use the setting of ``num_train``. Default: True</span>
+<span class="sd">    noise_type : str, optional</span>
+<span class="sd">        The type of noise to be added to the training set, &#39;multiSigma&#39; or &#39;singleSigma&#39;. Default: &#39;multiSigma&#39;</span>
+<span class="sd">    noise_sigma : float, optional</span>
+<span class="sd">        For the case of &#39;singleSigma&#39;, it is the standard deviation of the Gaussian noise, while for the case of &#39;multiSigma&#39; it is </span>
+<span class="sd">        a coefficient of the standard deviation. Default: 0.5</span>
+<span class="sd">    multi_noise : int, optional</span>
+<span class="sd">        The number of realization of noise added to a spectrum. Default: 5</span>
+<span class="sd">    norm_inputs : bool, optional</span>
+<span class="sd">        If True, the input data of the network will be normalized. Default: True</span>
+<span class="sd">    norm_target : bool, optional</span>
+<span class="sd">        If True, the target data (cosmological parameters) will be normalized. Default: True</span>
+<span class="sd">    norm_type : str, optional</span>
+<span class="sd">        The method of normalization, &#39;z_score&#39;, &#39;minmax&#39;, or &#39;mean&#39; (see :class:`~.data_processor.Normalize`). Default: &#39;z_score&#39;</span>
+<span class="sd">    set_numpySeed : bool, optional</span>
+<span class="sd">        If True, a fixed random seed that works for ``numpy`` will be set before training the network. Default: True</span>
+<span class="sd">    set_torchSeed : bool, optional</span>
+<span class="sd">        If True, a fixed random seed that works for ``PyTorch`` will be set before training the network. Default: True</span>
+<span class="sd">    train_branch : bool, optional</span>
+<span class="sd">        If True, the branch part of the multibranch network will be trained before training the entire network. Default: False</span>
+<span class="sd">    match_init : bool, optional</span>
+<span class="sd">        If True, the parameter space to be learned is fixed to the initial parameter space, </span>
+<span class="sd">        otherwise, it can jump out of the initial setting of parameter space. Default: False</span>
+<span class="sd">    spaceSigma_min : int, optional</span>
+<span class="sd">        The minimum parameter space to be learned, e.g. for spaceSigma_min=5, the parameter space to be learned is :math:`[-5\sigma, +5\sigma]`. Default: 5</span>
+<span class="sd">    chain_leng : int, optional</span>
+<span class="sd">        The number of samples to be generated by a network model when predicting ANN chain, which is equal to the length of the ANN chain. Default: 10000</span>
+<span class="sd">    </span>
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    The number of samples of the training set should be large enough to ensure the network learns a reliable mapping.</span>
+<span class="sd">    For example, set num_train to 3000, or a larger value like 4000 or 5000.</span>
+<span class="sd">    </span>
+<span class="sd">    The epoch should also be set large enough to ensure a well-learned network.</span>
+<span class="sd">    e.g. set epoch to 2000, or a larger value like 3000, 4000, or 5000.</span>
+<span class="sd">    </span>
+<span class="sd">    The initial parameter space is suggested to set large enough to cover the true parameters.</span>
+<span class="sd">    In this case, it be easier for the network to find the best-fit value of parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    It is better to set step number a large value like 10, and this will minimize the effect of randomness on the results.</span>
+<span class="sd">    However, it is also acceptable to set a smaller value like 5, because burn-in will be reached quickly (usually no more than 2 steps).</span>
+<span class="sd">    The advantage of this method is that we can analyze the results before the end of the training process, and determine how many steps </span>
+<span class="sd">    can be used to estimate parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    Local samples can be used as training set to save time, so when using this method, you can generate a sample library for later reuse.    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cosmic_model</span><span class="p">,</span> <span class="n">param_names</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  
+                 <span class="n">hidden_layer</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">branch_hiddenLayer</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">trunk_hiddenLayer</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">epoch_branch</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+                 <span class="n">num_train</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">local_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">steps_n</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="c1">#observational data &amp; cosmological model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cosmic_model</span> <span class="o">=</span> <span class="n">cosmic_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_names</span> <span class="o">=</span> <span class="n">param_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span> <span class="o">=</span> <span class="n">params_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">cov_matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_params</span><span class="p">(</span><span class="n">init_params</span><span class="p">)</span>
+        <span class="c1">#ANN model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span> <span class="o">=</span> <span class="n">hidden_layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hp_model</span> <span class="o">=</span> <span class="s1">&#39;eco_3&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branch_n</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch_hiddenLayer</span> <span class="o">=</span> <span class="n">branch_hiddenLayer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trunk_hiddenLayer</span> <span class="o">=</span> <span class="n">trunk_hiddenLayer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="mf">1e-2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr_min</span> <span class="o">=</span> <span class="mf">1e-8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">750</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_batchSize</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="n">epoch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch_branch</span> <span class="o">=</span> <span class="n">epoch_branch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_epoch</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1">#training set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_train</span> <span class="o">=</span> <span class="n">num_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_N_max</span> <span class="o">=</span> <span class="mi">1500</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_N</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_samples</span> <span class="o">=</span> <span class="n">local_samples</span>
+        <span class="c1">#data preprocessing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noise_type</span> <span class="o">=</span> <span class="s1">&#39;multiSigma&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noise_sigma</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multi_noise</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_inputs</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_target</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;z_score&#39;</span>
+        <span class="c1">#training</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_numpySeed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_torchSeed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_branch</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1">#updating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps_n</span> <span class="o">=</span> <span class="n">steps_n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_init</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spaceSigma_min</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_leng</span> <span class="o">=</span> <span class="mi">10000</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">obs_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obs_varis</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="p">):</span>
+                <span class="n">obs_varis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">obs_varis</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">obs_dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">obs_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obs_errs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="p">):</span>
+                <span class="n">obs_errs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">obs_errs</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">base_N</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_train</span><span class="o">//</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">bn</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_N_max</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">bn</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_N_max</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">base_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="o">//</span><span class="mi">2</span>
+    
+    <span class="k">def</span> <span class="nf">_init_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prior</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">prior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">))])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">prior</span>
+    
+    <span class="k">def</span> <span class="nf">_branch_n</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+    
+    <span class="k">def</span> <span class="nf">_randn_nums</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">randn_num</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">()</span><span class="o">/</span><span class="mf">5.</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">randn_num</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">randn_num</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">randn_num</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">randn_num</span><span class="o">+</span><span class="n">i</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">steps_n</span><span class="p">)]</span>
+    
+<div class="viewcode-block" id="ANN.print_hparams"><a class="viewcode-back" href="../../parameter_estimation.html#ecopann.ann.ANN.print_hparams">[docs]</a>    <span class="k">def</span> <span class="nf">print_hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#print all useful hyper parameters</span>
+        <span class="c1">#only print the first randn_num</span>
+        <span class="k">pass</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cov_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov_matrix</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="ANN.save_variables"><a class="viewcode-back" href="../../parameter_estimation.html#ecopann.ann.ANN.save_variables">[docs]</a>    <span class="k">def</span> <span class="nf">save_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;ann&#39;</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sample</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="s1">&#39;variables_</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">randn_num</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="s1">&#39;variables-</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">randn_num</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">savenpy</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;/variables&#39;</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_variables</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_dtype</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="ANN.train"><a class="viewcode-back" href="../../parameter_estimation.html#ecopann.ann.ANN.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;ann&#39;</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Train the network and save the results.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str, optional</span>
+<span class="sd">            The path of the results to be saved. Default: &#39;ann&#39;</span>
+<span class="sd">        sample : str or None, optional</span>
+<span class="sd">            Symbol mark of observational data or measurements. Default: None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            A list of chains.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">randn_nums</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_randn_nums</span><span class="p">()</span>
+        
+        <span class="c1">#logs &amp; variables</span>
+        <span class="n">logName</span> <span class="o">=</span> <span class="s1">&#39;log_</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">randn_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;/logs&#39;</span><span class="p">,</span> <span class="n">fileName</span><span class="o">=</span><span class="n">logName</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_variables</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_numpySeed</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_torchSeed</span><span class="p">:</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_all</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">burn_in</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">burnIn_step</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps_n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">step</span><span class="o">-</span><span class="mi">1</span>
+            <span class="c1">#simulate data &amp; update parameters space</span>
+            <span class="k">if</span> <span class="n">step</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="s1">&#39;#&#39;</span><span class="o">*</span><span class="mi">25</span><span class="o">+</span><span class="s1">&#39; step </span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps_n</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;#&#39;</span><span class="o">*</span><span class="mi">25</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">simor</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">Spectra</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cosmic_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_train</span><span class="p">,</span> <span class="n">base_N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base_N</span><span class="p">,</span> <span class="n">auto_N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_N</span><span class="p">,</span> <span class="n">local_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">local_samples</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">simor</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">MultiSpectra</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cosmic_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_train</span><span class="p">,</span> <span class="n">base_N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base_N</span><span class="p">,</span> <span class="n">auto_N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_N</span><span class="p">,</span> <span class="n">local_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">local_samples</span><span class="p">)</span>
+                <span class="n">sim_y</span><span class="p">,</span> <span class="n">sim_params</span> <span class="o">=</span> <span class="n">simor</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">step</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+                    <span class="n">chain_0</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">elif</span> <span class="n">step</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">:</span>
+                    <span class="n">chain_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_all</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">updater</span> <span class="o">=</span> <span class="n">su</span><span class="o">.</span><span class="n">UpdateParameterSpace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_all</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">chain_0</span><span class="o">=</span><span class="n">chain_0</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">match_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">match_init</span><span class="p">)</span>
+                <span class="n">updater</span><span class="o">.</span><span class="n">spaceSigma_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaceSigma_min</span>
+                <span class="k">if</span> <span class="n">updater</span><span class="o">.</span><span class="n">small_dev</span><span class="p">(</span><span class="n">limit_dev</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
+                    <span class="k">break</span>
+                <span class="c1">#this is based on experiments</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">burnIn_step</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">max</span><span class="p">(</span><span class="n">updater</span><span class="o">.</span><span class="n">params_dev</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">1</span> <span class="ow">and</span> <span class="nb">max</span><span class="p">(</span><span class="n">updater</span><span class="o">.</span><span class="n">params_error_dev</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">0.5</span><span class="p">:</span>
+                    <span class="n">burn_in</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">burnIn_step</span> <span class="o">=</span> <span class="n">step</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1">#let good chain contain burn-in step chain</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">73</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">burnIn_step</span><span class="o">&gt;=</span><span class="mi">10</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">5</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">24</span><span class="o">+</span><span class="s1">&#39;Burn-In step: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">burnIn_step</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">23</span><span class="o">+</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">5</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">24</span><span class="o">+</span><span class="s1">&#39;Burn-In step: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">burnIn_step</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">24</span><span class="o">+</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">5</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">11</span><span class="o">+</span><span class="s1">&#39;The parameters have reached stable values&#39;</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">11</span><span class="o">+</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">5</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">1</span><span class="o">+</span><span class="s1">&#39;The chains of later steps can be used for parameter inference&#39;</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">1</span><span class="o">+</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">73</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="s1">&#39;#&#39;</span><span class="o">*</span><span class="mi">25</span><span class="o">+</span><span class="s1">&#39; step </span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps_n</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;#&#39;</span><span class="o">*</span><span class="mi">25</span><span class="p">)</span>
+                <span class="n">params_space</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+                <span class="c1"># check whether it has problems when using previous_data</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">simor</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">Spectra</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cosmic_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">params_space</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_train</span><span class="p">,</span> <span class="n">base_N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base_N</span><span class="p">,</span> <span class="n">auto_N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_N</span><span class="p">,</span> <span class="n">local_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">local_samples</span><span class="p">,</span> <span class="n">prevStep_data</span><span class="o">=</span><span class="p">[</span><span class="n">sim_y</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">simor</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">MultiSpectra</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cosmic_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">params_space</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_train</span><span class="p">,</span> <span class="n">base_N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base_N</span><span class="p">,</span> <span class="n">auto_N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_N</span><span class="p">,</span> <span class="n">local_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">local_samples</span><span class="p">,</span> <span class="n">prevStep_data</span><span class="o">=</span><span class="p">[</span><span class="n">sim_y</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">])</span>
+                <span class="n">simor</span><span class="o">.</span><span class="n">sigma_max</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">sigma_max</span>
+                <span class="n">simor</span><span class="o">.</span><span class="n">burn_in</span> <span class="o">=</span> <span class="n">burn_in</span>
+                <span class="n">sim_y</span><span class="p">,</span> <span class="n">sim_params</span> <span class="o">=</span> <span class="n">simor</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+                
+            <span class="c1">#training</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eco</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">MLP</span><span class="p">(</span><span class="n">sim_y</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">obs_errors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_errors</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cov_copy</span><span class="p">,</span>
+                                      <span class="n">hidden_layer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span><span class="p">,</span> <span class="n">hp_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hp_model</span><span class="p">,</span> <span class="n">loss_func</span><span class="o">=</span><span class="s1">&#39;L1&#39;</span><span class="p">,</span>
+                                      <span class="n">noise_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_type</span><span class="p">,</span> <span class="n">noise_sigma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_sigma</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eco</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">MultiBranchNet</span><span class="p">(</span><span class="n">sim_y</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">obs_errors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_errors</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cov_copy</span><span class="p">,</span>
+                                                 <span class="n">branch_hiddenLayer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">branch_hiddenLayer</span><span class="p">,</span> <span class="n">trunk_hiddenLayer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trunk_hiddenLayer</span><span class="p">,</span> <span class="n">hp_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hp_model</span><span class="p">,</span> <span class="n">loss_func</span><span class="o">=</span><span class="s1">&#39;L1&#39;</span><span class="p">,</span>
+                                                 <span class="n">noise_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_type</span><span class="p">,</span> <span class="n">noise_sigma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_sigma</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">lr_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_min</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">auto_batchSize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_batchSize</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">base_epoch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_epoch</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">auto_epoch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_epoch</span>
+            <span class="k">if</span> <span class="n">step</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">print_info</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">multi_noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_noise</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">norm_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_inputs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">norm_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_target</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">norm_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_type</span>
+            <span class="k">if</span> <span class="n">step</span><span class="o">&gt;=</span><span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">spaceSigma_min</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">sigma_min</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">auto_repeat_n</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">burn_in</span> <span class="o">=</span> <span class="n">burn_in</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">burnIn_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">burnIn_step</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">transfer_learning</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">randn_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">randn_nums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">repeat_n</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">lr_branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">epoch_branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_branch</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">repeat_n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">train_branch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_branch</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1">## reset parallel</span>
+            
+            <span class="c1">#predict chain</span>
+            <span class="c1">#Note: here use self.cov_copy is to avoid data type error in &quot;eco&quot;</span>
+            <span class="n">chain_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">predict_chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cov_copy</span><span class="p">,</span> <span class="n">chain_leng</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chain_leng</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chain_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chain_1</span><span class="p">)</span>
+            
+            <span class="c1">#save results</span>
+            <span class="n">sample_i</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_step</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span> <span class="k">if</span> <span class="n">sample</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">save_net</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="n">sample_i</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">save_chain</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="n">sample_i</span><span class="p">)</span>            
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">save_hparams</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="n">sample_i</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Time elapsed for the training process: </span><span class="si">%.3f</span><span class="s2"> minutes&quot;</span><span class="o">%</span><span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_all</span></div>
+    
+<div class="viewcode-block" id="ANN.chains_good"><a class="viewcode-back" href="../../parameter_estimation.html#ecopann.ann.ANN.chains_good">[docs]</a>    <span class="k">def</span> <span class="nf">chains_good</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">burnIn_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of steps is too small to find the Burn-In step and good chains!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_all</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">burnIn_step</span><span class="p">:]</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">chain_ann</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Combined ANN chain using the result of steps after burn-in.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_chains_good</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chains_good</span><span class="p">()</span>
+        <span class="n">chain_comb</span> <span class="o">=</span> <span class="n">_chains_good</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_chains_good</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_chains_good</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">chain_comb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">chain_comb</span><span class="p">,</span> <span class="n">_chains_good</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">chain_comb</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">param_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cosmic_params</span><span class="o">.</span><span class="n">ParamsProperty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span><span class="n">params_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span><span class="p">)</span><span class="o">.</span><span class="n">labels</span></div>
+
+
+<span class="c1">#%% repredict</span>
+<div class="viewcode-block" id="RePredict"><a class="viewcode-back" href="../../parameter_estimation.html#ecopann.ann.RePredict">[docs]</a><span class="k">class</span> <span class="nc">RePredict</span><span class="p">(</span><span class="n">plotter</span><span class="o">.</span><span class="n">Plotters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reanalysis using the saved chains or the well-trained networks.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array-like or list</span>
+<span class="sd">        The observational spectra (data) with shape (spectra_length,3), or a list of spectra with shape [(spectra_length_1,3), (spectra_length_2,3), ...].</span>
+<span class="sd">        The first column is the observational variable, the second column is the best values of the measurement, </span>
+<span class="sd">        and the third column is the error of the measurement.</span>
+<span class="sd">    cov_matrix : array-like, list, or None, optional</span>
+<span class="sd">        Covariance matrix of the observational data. It should be an array with shape (spectra_length, spectra_length), </span>
+<span class="sd">        or a list of covariance matrix with shape [(spectra_length_1, spectra_length_1), (spectra_length_2, spectra_length_2), ...].</span>
+<span class="sd">        If there is no covariance for some observations, the covariance matrix should be set to None. e.g. [cov_matrix_1, None, cov_matrix_3]. Default: None</span>
+<span class="sd">    path : str, optional</span>
+<span class="sd">        The path of the results saved. Default: &#39;ann&#39;</span>
+<span class="sd">    randn_num : str or int, optional</span>
+<span class="sd">        A random number that identifies the saved results. Default: &#39;&#39;</span>
+<span class="sd">    steps_n : int, optional</span>
+<span class="sd">        The number of steps of the training process. Default: 10</span>
+<span class="sd">    params_dict : dict or None, optional</span>
+<span class="sd">        Information of cosmological parameters that include the labels, the base values, the minimum values, </span>
+<span class="sd">        and the maximum values. See params_dict_zoo. Default: None</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    norm_inputs : bool, optional</span>
+<span class="sd">        If True, the input data of the network will be normalized. Default: True</span>
+<span class="sd">    norm_target : bool, optional</span>
+<span class="sd">        If True, the target data (cosmological parameters) will be normalized. Default: True</span>
+<span class="sd">    norm_type : str, optional</span>
+<span class="sd">        The method of normalization, &#39;z_score&#39;, &#39;minmax&#39;, or &#39;mean&#39; (see :class:`~.data_processor.Normalize`). Default: &#39;z_score&#39;</span>
+<span class="sd">    chain_leng : int, optional</span>
+<span class="sd">        The number of samples to be generated by a network model when predicting ANN chain, which is equal to the length of the ANN chain. Default: 10000</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;ann&#39;</span><span class="p">,</span> <span class="n">randn_num</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">steps_n</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">cov_matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branch_n</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">randn_num</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">randn_num</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">randn_nums</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">randn_num</span><span class="p">))</span> <span class="o">+</span> <span class="n">Decimal</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps_n</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps_n</span> <span class="o">=</span> <span class="n">steps_n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span> <span class="o">=</span> <span class="n">params_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_inputs</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_target</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;z_score&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_leng</span> <span class="o">=</span> <span class="mi">10000</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">RePredictMLP</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="n">params_dict</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">RePredictMBNet</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="n">params_dict</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_branch_n</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">obs_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obs_varis</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="p">):</span>
+                <span class="n">obs_varis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">obs_varis</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">trained_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">evaluate</span><span class="o">.</span><span class="n">FilePath</span><span class="p">(</span><span class="n">filedir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;/variables&#39;</span><span class="p">,</span> <span class="n">randn_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">randn_num</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.npy&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filePath</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">same_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_variables</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">trained_variables</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">same_varis</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_variables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">trained_variables</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branch_n</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">same_varis</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cov_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov_matrix</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="RePredict.from_chain"><a class="viewcode-back" href="../../parameter_estimation.html#ecopann.ann.RePredict.from_chain">[docs]</a>    <span class="k">def</span> <span class="nf">from_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predict using saved chains.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If variables of the input observational data are different from those used to train the network, an error will be raised.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">same_variables</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Variables of the input observational data are different from those used to train the network!&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_all</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chains_good</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">steps_n</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">randn_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">randn_nums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">load_chain</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">load_hparams</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chain_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">chain</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">burnIn_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">chains_good</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">chain</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="RePredict.from_net"><a class="viewcode-back" href="../../parameter_estimation.html#ecopann.ann.RePredict.from_net">[docs]</a>    <span class="k">def</span> <span class="nf">from_net</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predict using saved networks.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If variables of the input observational data are different from those used to train the network, an error will be raised.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">same_variables</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Variables of the input observational data are different from those used to train the network!&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_all</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chains_good</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="c1">#</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">steps_n</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">randn_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">randn_nums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">load_net</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">load_hparams</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">predict_chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cov_copy</span><span class="p">,</span> <span class="n">chain_leng</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chain_leng</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chain_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">chain</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">burnIn_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">chains_good</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">chain</span><span class="p">)</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">chain_ann</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Combined ANN chain using the result of steps after burn-in.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chains_good</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of steps is too small to find the Burn-In step and good chains!&#39;</span><span class="p">)</span>
+        <span class="n">chain_comb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chains_good</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chains_good</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chains_good</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">chain_comb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">chain_comb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chains_good</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">chain_comb</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">su</span><span class="o">.</span><span class="n">Chains</span><span class="o">.</span><span class="n">bestFit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chain_ann</span><span class="p">,</span> <span class="n">symmetry_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">param_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cosmic_params</span><span class="o">.</span><span class="n">ParamsProperty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span><span class="n">params_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dict</span><span class="p">)</span><span class="o">.</span><span class="n">labels</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">burnIn_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">eco</span><span class="o">.</span><span class="n">burnIn_step</span></div>
+
+
+<span class="c1">#%% try BNN(Bayesian Neural Networks) &amp; RNN</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Guojian Wang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
