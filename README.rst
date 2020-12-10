@@ -10,6 +10,12 @@ ECoPANN can be applied to the research of cosmology and even other broader scien
 It is proposed by `Guo-Jian Wang, Si-Yao Li, Jun-Qing Xia (2020) <https://doi.org/10.3847/1538-4365/aba190>`_.
 
 
+Documentation
+-------------
+
+The documentation can be found at `ecopann.readthedocs.io <https://ecopann.readthedocs.io>`_.
+
+
 Attribution
 -----------
 
