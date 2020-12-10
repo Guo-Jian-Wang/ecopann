@@ -2,4 +2,4 @@ torch==1.4.0
 numpy
 scipy
 matplotlib
-logging==0.5.1.2
+logging
