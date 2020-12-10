@@ -1,0 +1,753 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Training sets &mdash; ECoPANN 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Parameter estimation" href="parameter_estimation.html" />
+    <link rel="prev" title="ANN models" href="ann_models.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> ECoPANN
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickStart.html">Quick Start</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="package_reference.html">Package Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ann_models.html">ANN models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Training sets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-ecopann.cosmic_params">ecopann.cosmic_params</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-ecopann.data_simulator">ecopann.data_simulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-ecopann.data_processor">ecopann.data_processor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="parameter_estimation.html">Parameter estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release_history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECoPANN</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="package_reference.html">Package Reference</a> &raquo;</li>
+        
+      <li>Training sets</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/training_sets.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="training-sets">
+<span id="id1"></span><h1>Training sets<a class="headerlink" href="#training-sets" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-ecopann.cosmic_params">
+<span id="ecopann-cosmic-params"></span><h2>ecopann.cosmic_params<a class="headerlink" href="#module-ecopann.cosmic_params" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ecopann.cosmic_params.ParamsProperty">
+<em class="property">class </em><code class="descclassname">ecopann.cosmic_params.</code><code class="descname">ParamsProperty</code><span class="sig-paren">(</span><em>param_names</em>, <em>params_dict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/cosmic_params.html#ParamsProperty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.cosmic_params.ParamsProperty" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="ecopann.cosmic_params.ParamsProperty.labels">
+<code class="descname">labels</code><a class="headerlink" href="#ecopann.cosmic_params.ParamsProperty.labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ecopann.cosmic_params.ParamsProperty.param_fullNames">
+<code class="descname">param_fullNames</code><a class="headerlink" href="#ecopann.cosmic_params.ParamsProperty.param_fullNames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ecopann.cosmic_params.ParamsProperty.params_base">
+<code class="descname">params_base</code><a class="headerlink" href="#ecopann.cosmic_params.ParamsProperty.params_base" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ecopann.cosmic_params.ParamsProperty.params_limit">
+<code class="descname">params_limit</code><a class="headerlink" href="#ecopann.cosmic_params.ParamsProperty.params_limit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ecopann.cosmic_params.params_dict_zoo">
+<code class="descclassname">ecopann.cosmic_params.</code><code class="descname">params_dict_zoo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/cosmic_params.html#params_dict_zoo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.cosmic_params.params_dict_zoo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Information of cosmological parameters that include the labels, the base values, the minimum values, and the maximum values: [label, base value, minimum, maximum]</p>
+<p>The label is used to plot figures, the general value is used for data normalization when training the network,
+the extremum of parameters is used to update parameter space in the training process.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If the extremum of parameters is unknown or there is no extremum, it should be set to np.nan.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ecopann.data_simulator">
+<span id="ecopann-data-simulator"></span><h2>ecopann.data_simulator<a class="headerlink" href="#module-ecopann.data_simulator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ecopann.data_simulator.AddGaussianNoise">
+<em class="property">class </em><code class="descclassname">ecopann.data_simulator.</code><code class="descname">AddGaussianNoise</code><span class="sig-paren">(</span><em>spectra</em>, <em>obs_errors=None</em>, <em>cov_matrix=None</em>, <em>use_GPU=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#AddGaussianNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.AddGaussianNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Add Gaussian noise for simulated data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>spectra</strong> (<em>torch tensor</em><em>, or </em><em>a list of torch tensor</em>) – The simulated spectra (data) with shape (N, spectra_length), or a list of spectra with shape [(N,spectra_length_1), (N,spectra_length_2), …]</li>
+<li><strong>obs_errors</strong> (<em>torch tensor</em><em>, or </em><em>a list of torch tensor</em><em>, </em><em>optional</em>) – Observational errors with shape (spectra_length,), or a list of errors with shape [(spectra_length_1,), (spectra_length_2,), …]. Default: None</li>
+<li><strong>cov_matrix</strong> (<em>torch tensor</em><em>, </em><em>a list of torch tensor</em><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>, </em><em>optional</em>) – Covariance matrix with shape (spectra_length, spectra_length), or a list of covariance matrix with shape
+[(spectra_length_1, spectra_length_1), (spectra_length_2, spectra_length_2), …]. Default: None</li>
+<li><strong>use_GPU</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, the noise will be generated by GPU, otherwise, it will be generated by CPU. Default: True</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ecopann.data_simulator.AddGaussianNoise.multiSigma">
+<code class="descname">multiSigma</code><span class="sig-paren">(</span><em>sigma=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#AddGaussianNoise.multiSigma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.AddGaussianNoise.multiSigma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.AddGaussianNoise.noisySpectra">
+<code class="descname">noisySpectra</code><span class="sig-paren">(</span><em>noise_type='multiSigma'</em>, <em>sigma=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#AddGaussianNoise.noisySpectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.AddGaussianNoise.noisySpectra" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.AddGaussianNoise.singleSigma">
+<code class="descname">singleSigma</code><span class="sig-paren">(</span><em>sigma=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#AddGaussianNoise.singleSigma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.AddGaussianNoise.singleSigma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ecopann.data_simulator.AddMultiGaussianNoise">
+<em class="property">class </em><code class="descclassname">ecopann.data_simulator.</code><code class="descname">AddMultiGaussianNoise</code><span class="sig-paren">(</span><em>spectra</em>, <em>params</em>, <em>obs_errors=None</em>, <em>cov_matrix=None</em>, <em>multi_noise=5</em>, <em>use_GPU=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#AddMultiGaussianNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.AddMultiGaussianNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ecopann.data_simulator.AddGaussianNoise" title="ecopann.data_simulator.AddGaussianNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">ecopann.data_simulator.AddGaussianNoise</span></code></a></p>
+<p>Add multiple Gaussian noise for simulated data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>spectra</strong> (<em>torch tensor</em><em>, or </em><em>a list of torch tensor</em>) – The simulated spectra (data) with shape (N, spectra_length), or a list of spectra with shape [(N,spectra_length_1), (N,spectra_length_2), …]</li>
+<li><strong>params</strong> (<em>torch tensor</em>) – The simulated cosmological parameters.</li>
+<li><strong>obs_errors</strong> (<em>torch tensor</em><em>, or </em><em>a list of torch tensor</em><em>, </em><em>optional</em>) – Observational errors with shape (spectra_length,), or a list of errors with shape [(spectra_length_1,), (spectra_length_2,), …]. Default: None</li>
+<li><strong>cov_matrix</strong> (<em>torch tensor</em><em>, </em><em>a list of torch tensor</em><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>, </em><em>optional</em>) – Covariance matrix with shape (spectra_length, spectra_length), or a list of covariance matrix with shape
+[(spectra_length_1, spectra_length_1), (spectra_length_2, spectra_length_2), …]. Default: None</li>
+<li><strong>multi_noise</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of realization of noise added to a spectrum. Default: 5</li>
+<li><strong>use_GPU</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, the noise will be generated by GPU, otherwise, it will be generated by CPU. Default: True</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ecopann.data_simulator.AddMultiGaussianNoise.multiNoisySample">
+<code class="descname">multiNoisySample</code><span class="sig-paren">(</span><em>noise_type='multiSigma'</em>, <em>sigma=0.5</em>, <em>reorder=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#AddMultiGaussianNoise.multiNoisySample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.AddMultiGaussianNoise.multiNoisySample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.AddMultiGaussianNoise.multiNoisySpectra">
+<code class="descname">multiNoisySpectra</code><span class="sig-paren">(</span><em>noise_type</em>, <em>sigma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#AddMultiGaussianNoise.multiNoisySpectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.AddMultiGaussianNoise.multiNoisySpectra" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.AddMultiGaussianNoise.multiParams">
+<code class="descname">multiParams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#AddMultiGaussianNoise.multiParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.AddMultiGaussianNoise.multiParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ecopann.data_simulator.MultiSpectra">
+<em class="property">class </em><code class="descclassname">ecopann.data_simulator.</code><code class="descname">MultiSpectra</code><span class="sig-paren">(</span><em>branch_n</em>, <em>model</em>, <em>param_names</em>, <em>params_space</em>, <em>params_dict=None</em>, <em>step=1</em>, <em>N=5000</em>, <em>base_N=2000</em>, <em>auto_N=True</em>, <em>local_samples=None</em>, <em>prevStep_data=None</em>, <em>check_include=True</em>, <em>rel_dev_limit=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#MultiSpectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.MultiSpectra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ecopann.data_simulator.Spectra" title="ecopann.data_simulator.Spectra"><code class="xref py py-class docutils literal notranslate"><span class="pre">ecopann.data_simulator.Spectra</span></code></a></p>
+<p>Simulate training set containing multiple observations (for multi-branch network).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>branch_n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of branch of the network.</li>
+<li><strong>model</strong> (<em>cosmological</em><em> (or </em><em>theoretical</em><em>) </em><em>model instance</em>) – A cosmological (or theoretical) model instance that is used to simulate training set,
+it should contains a ‘simulate’ method, and ‘simulate’ should accept input of cosmological parameters,
+if you use the local data sets, it should also contain ‘load_params’ and ‘load_sample’ methods.</li>
+<li><strong>param_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – A list that contains parameter names.</li>
+<li><strong>params_space</strong> (<em>array-like</em>) – The parameter space with the shape of (n, 2), where n is the number of parameters. For each parameter, it is: [lower_limit, upper_limit].</li>
+<li><strong>params_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>, </em><em>optional</em>) – Information of cosmological parameters that include the labels, the base values, the minimum values,
+and the maximum values. See <a class="reference internal" href="#ecopann.cosmic_params.params_dict_zoo" title="ecopann.cosmic_params.params_dict_zoo"><code class="xref py py-func docutils literal notranslate"><span class="pre">params_dict_zoo()</span></code></a>. Default: None</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of step of the training process. Default: 1</li>
+<li><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of data to be simulated. Default: 5000</li>
+<li><strong>base_N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The basic or minimum number of data to be simulated, which works only when <code class="docutils literal notranslate"><span class="pre">auto_N</span></code> is set to True. Default: 2000</li>
+<li><strong>auto_N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, <code class="docutils literal notranslate"><span class="pre">N</span></code> is set automatically and the value of <code class="docutils literal notranslate"><span class="pre">N</span></code> will be ignored in some cases according to parameter space. Default: True</li>
+<li><strong>local_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><em>optional</em>) – Path of local samples, None, ‘sample’ or [‘sample’] or [‘sample_1’, ‘sample_2’, …].
+If None, no local samples are used. Default: None</li>
+<li><strong>prevStep_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><em>optional</em>) – Samples simulated in the previous step, if list, it should be [spectra, params].
+The spectra or params has shape (N, n), where N is the number of spectra and n is the number of data points in a spectrum. Default: None</li>
+<li><strong>check_include</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, will check whether <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is in the space of <code class="docutils literal notranslate"><span class="pre">local_samples</span></code>, otherwise, do nothing. Default: True</li>
+<li><strong>rel_dev_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – The limit of the relative deviation when <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is not in the space of <code class="docutils literal notranslate"><span class="pre">sim_params</span></code>, the default is 20% (this means if <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is
+<span class="math notranslate nohighlight">\([-5\sigma, +5\sigma]\)</span>, it can deviate <span class="math notranslate nohighlight">\(&lt;1\sigma\)</span> from <code class="docutils literal notranslate"><span class="pre">sim_params</span></code>), note that it should be <span class="math notranslate nohighlight">\(&lt;0.4\)</span> (the deviation <span class="math notranslate nohighlight">\(&lt;2\sigma\)</span> for parameter space
+<span class="math notranslate nohighlight">\([-5\sigma, +5\sigma]\)</span>). Default: 0.2</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ecopann.data_simulator.MultiSpectra.save_samples">
+<code class="descname">save_samples</code><span class="sig-paren">(</span><em>root_path='sim_data', branch_paths=['comp1', 'comp2']</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#MultiSpectra.save_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.MultiSpectra.save_samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.MultiSpectra.simulate_spectra">
+<code class="descname">simulate_spectra</code><span class="sig-paren">(</span><em>N</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#MultiSpectra.simulate_spectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.MultiSpectra.simulate_spectra" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ecopann.data_simulator.ParametersFilter">
+<em class="property">class </em><code class="descclassname">ecopann.data_simulator.</code><code class="descname">ParametersFilter</code><span class="sig-paren">(</span><em>param_names</em>, <em>sim_params</em>, <em>params_space</em>, <em>check_include=True</em>, <em>rel_dev_limit=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#ParametersFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.ParametersFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Select cosmological parameters from a data set according to a given parameter space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>param_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – A list that contains parameter names.</li>
+<li><strong>sim_params</strong> (<em>array-like</em>) – The simulated cosmological parameters with the shape of (N, n), where N is the number of samples and n is the number of parameters.</li>
+<li><strong>params_space</strong> (<em>array-like</em>) – The parameter space with the shape of (n, 2), where n is the number of parameters. For each parameter, it is: [lower_limit, upper_limit].</li>
+<li><strong>check_include</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, it will check whether <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is in the space of <code class="docutils literal notranslate"><span class="pre">sim_params</span></code>, otherwise, do nothing. Default: True</li>
+<li><strong>rel_dev_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – The limit of the relative deviation when <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is not in the space of <code class="docutils literal notranslate"><span class="pre">sim_params</span></code>, the default is 20% (this means if <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is
+<span class="math notranslate nohighlight">\([-5\sigma, +5\sigma]\)</span>, it can deviate <span class="math notranslate nohighlight">\(&lt;1\sigma\)</span> from <code class="docutils literal notranslate"><span class="pre">sim_params</span></code>), note that it should be <span class="math notranslate nohighlight">\(&lt;0.4\)</span> (the deviation <span class="math notranslate nohighlight">\(&lt;2\sigma\)</span> for parameter space
+<span class="math notranslate nohighlight">\([-5\sigma, +5\sigma]\)</span>). Default: 0.2</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ecopann.data_simulator.ParametersFilter.filter_index">
+<code class="descname">filter_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#ParametersFilter.filter_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.ParametersFilter.filter_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.ParametersFilter.filter_params">
+<code class="descname">filter_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#ParametersFilter.filter_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.ParametersFilter.filter_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ecopann.data_simulator.ParametersFilter.include">
+<code class="descname">include</code><a class="headerlink" href="#ecopann.data_simulator.ParametersFilter.include" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is in the space of the <code class="docutils literal notranslate"><span class="pre">sim_params</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">If <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is in the space of the <code class="docutils literal notranslate"><span class="pre">sim_params</span></code>, return True, otherwise, return False.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ecopann.data_simulator.Spectra">
+<em class="property">class </em><code class="descclassname">ecopann.data_simulator.</code><code class="descname">Spectra</code><span class="sig-paren">(</span><em>model</em>, <em>param_names</em>, <em>params_space</em>, <em>params_dict=None</em>, <em>step=1</em>, <em>N=5000</em>, <em>base_N=2000</em>, <em>auto_N=True</em>, <em>local_samples=None</em>, <em>prevStep_data=None</em>, <em>check_include=True</em>, <em>rel_dev_limit=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#Spectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.Spectra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Simulate training set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>cosmological</em><em> (or </em><em>theoretical</em><em>) </em><em>model instance</em>) – A cosmological (or theoretical) model instance that is used to simulate training set,
+it should contains a ‘simulate’ method, and ‘simulate’ should accept input of cosmological parameters,
+if you use the local data sets, it should also contain ‘load_params’ and ‘load_sample’ methods.</li>
+<li><strong>param_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – A list that contains parameter names.</li>
+<li><strong>params_space</strong> (<em>array-like</em>) – The parameter space with the shape of (n, 2), where n is the number of parameters. For each parameter, it is: [lower_limit, upper_limit].</li>
+<li><strong>params_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>, </em><em>optional</em>) – Information of cosmological parameters that include the labels, the base values, the minimum values,
+and the maximum values. See <a class="reference internal" href="#ecopann.cosmic_params.params_dict_zoo" title="ecopann.cosmic_params.params_dict_zoo"><code class="xref py py-func docutils literal notranslate"><span class="pre">params_dict_zoo()</span></code></a>. Default: None</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of step of the training process. Default: 1</li>
+<li><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of data to be simulated. Default: 5000</li>
+<li><strong>base_N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The basic or minimum number of data to be simulated, which works only when <code class="docutils literal notranslate"><span class="pre">auto_N</span></code> is set to True. Default: 2000</li>
+<li><strong>auto_N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, <code class="docutils literal notranslate"><span class="pre">N</span></code> is set automatically and the value of <code class="docutils literal notranslate"><span class="pre">N</span></code> will be ignored in some cases according to parameter space. Default: True</li>
+<li><strong>local_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><em>optional</em>) – Path of local samples, None, ‘sample’ or [‘sample’] or [‘sample_1’, ‘sample_2’, …].
+If None, no local samples are used. Default: None</li>
+<li><strong>prevStep_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><em>optional</em>) – Samples simulated in the previous step, if list, it should be [spectra, params].
+The spectra or params has shape (N, n), where N is the number of spectra and n is the number of data points in a spectrum. Default: None</li>
+<li><strong>check_include</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, will check whether <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is in the space of <code class="docutils literal notranslate"><span class="pre">local_samples</span></code>, otherwise, do nothing. Default: True</li>
+<li><strong>rel_dev_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – The limit of the relative deviation when <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is not in the space of <code class="docutils literal notranslate"><span class="pre">sim_params</span></code>, the default is 20% (this means if <code class="docutils literal notranslate"><span class="pre">params_space</span></code> is
+<span class="math notranslate nohighlight">\([-5\sigma, +5\sigma]\)</span>, it can deviate <span class="math notranslate nohighlight">\(&lt;1\sigma\)</span> from <code class="docutils literal notranslate"><span class="pre">sim_params</span></code>), note that it should be <span class="math notranslate nohighlight">\(&lt;0.4\)</span> (the deviation <span class="math notranslate nohighlight">\(&lt;2\sigma\)</span> for parameter space
+<span class="math notranslate nohighlight">\([-5\sigma, +5\sigma]\)</span>). Default: 0.2</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ecopann.data_simulator.Spectra.comb_spectra">
+<code class="descname">comb_spectra</code><span class="sig-paren">(</span><em>spectra_1</em>, <em>spectra_2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#Spectra.comb_spectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.Spectra.comb_spectra" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.Spectra.filter_localSample">
+<code class="descname">filter_localSample</code><span class="sig-paren">(</span><em>local_sample</em>, <em>N_local</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#Spectra.filter_localSample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.Spectra.filter_localSample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select samples from the local data sets.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>local_sample</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Folders of local samples.</li>
+<li><strong>N_local</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of local samples to be selected.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The selected spectra and parameters.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Parameter space of the local samples should be in the initial parameter space.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.Spectra.filter_localSamples">
+<code class="descname">filter_localSamples</code><span class="sig-paren">(</span><em>N_local</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#Spectra.filter_localSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.Spectra.filter_localSamples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.Spectra.filter_previousSamples">
+<code class="descname">filter_previousSamples</code><span class="sig-paren">(</span><em>N_pre</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#Spectra.filter_previousSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.Spectra.filter_previousSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select samples from the mock data simulated in the previous step.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>N_pre</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of samples to be selected.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The selected spectra and parameters.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array-like</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ecopann.data_simulator.Spectra.local_samples">
+<code class="descname">local_samples</code><a class="headerlink" href="#ecopann.data_simulator.Spectra.local_samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.Spectra.save_samples">
+<code class="descname">save_samples</code><span class="sig-paren">(</span><em>path='sim_data/sample'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#Spectra.save_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.Spectra.save_samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.Spectra.simulate">
+<code class="descname">simulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#Spectra.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.Spectra.simulate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.Spectra.simulate_spectra">
+<code class="descname">simulate_spectra</code><span class="sig-paren">(</span><em>N</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#Spectra.simulate_spectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.Spectra.simulate_spectra" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ecopann.data_simulator.Spectra.step">
+<code class="descname">step</code><a class="headerlink" href="#ecopann.data_simulator.Spectra.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_simulator.Spectra.uniform_params">
+<code class="descname">uniform_params</code><span class="sig-paren">(</span><em>N</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_simulator.html#Spectra.uniform_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_simulator.Spectra.uniform_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ecopann.data_processor">
+<span id="ecopann-data-processor"></span><h2>ecopann.data_processor<a class="headerlink" href="#module-ecopann.data_processor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ecopann.data_processor.InverseNormalize">
+<em class="property">class </em><code class="descclassname">ecopann.data_processor.</code><code class="descname">InverseNormalize</code><span class="sig-paren">(</span><em>x1</em>, <em>statistic={}</em>, <em>norm_type='z_score'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#InverseNormalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.InverseNormalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Inverse transformation of class <a class="reference internal" href="#ecopann.data_processor.Normalize" title="ecopann.data_processor.Normalize"><code class="xref py py-class docutils literal notranslate"><span class="pre">Normalize</span></code></a>.</p>
+<dl class="method">
+<dt id="ecopann.data_processor.InverseNormalize.inverseNorm">
+<code class="descname">inverseNorm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#InverseNormalize.inverseNorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.InverseNormalize.inverseNorm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_processor.InverseNormalize.mean">
+<code class="descname">mean</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#InverseNormalize.mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.InverseNormalize.mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_processor.InverseNormalize.minmax">
+<code class="descname">minmax</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#InverseNormalize.minmax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.InverseNormalize.minmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_processor.InverseNormalize.z_score">
+<code class="descname">z_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#InverseNormalize.z_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.InverseNormalize.z_score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ecopann.data_processor.Normalize">
+<em class="property">class </em><code class="descclassname">ecopann.data_processor.</code><code class="descname">Normalize</code><span class="sig-paren">(</span><em>x</em>, <em>statistic={}</em>, <em>norm_type='z_score'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#Normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.Normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Normalize data.</p>
+<dl class="method">
+<dt id="ecopann.data_processor.Normalize.mean">
+<code class="descname">mean</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#Normalize.mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.Normalize.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>mean normalization</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_processor.Normalize.minmax">
+<code class="descname">minmax</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#Normalize.minmax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.Normalize.minmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>min-max normalization</p>
+<p>Rescaling the range of features to scale the range in [0, 1] or [a,b]
+<a class="reference external" href="https://en.wikipedia.org/wiki/Feature_scaling">https://en.wikipedia.org/wiki/Feature_scaling</a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_processor.Normalize.norm">
+<code class="descname">norm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#Normalize.norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.Normalize.norm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_processor.Normalize.z_score">
+<code class="descname">z_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#Normalize.z_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.Normalize.z_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>standardization/z-score/zero-mean normalization</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ecopann.data_processor.ParamsScaling">
+<em class="property">class </em><code class="descclassname">ecopann.data_processor.</code><code class="descname">ParamsScaling</code><span class="sig-paren">(</span><em>parameters</em>, <em>param_names</em>, <em>params_dict=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#ParamsScaling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.ParamsScaling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Data preprocessing of cosmological parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parameters</strong> (<em>array-like</em>) – Cosmological parameters of the training set, with shape (N, n), where N is the number of the training set and n is the number of parameters.</li>
+<li><strong>param_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – A list which contains the parameter names, e.g. [‘H0’,’Omega_m’,’ombh2’,’omch2’,’tau’,’As’,’ns’].</li>
+<li><strong>params_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>, </em><em>optional</em>) – Information of cosmological parameters that include the labels, the base values, the minimum values,
+and the maximum values. See <a class="reference internal" href="#ecopann.cosmic_params.params_dict_zoo" title="ecopann.cosmic_params.params_dict_zoo"><code class="xref py py-func docutils literal notranslate"><span class="pre">params_dict_zoo()</span></code></a>. Default: None</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ecopann.data_processor.ParamsScaling.inverseScaling">
+<code class="descname">inverseScaling</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#ParamsScaling.inverseScaling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.ParamsScaling.inverseScaling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_processor.ParamsScaling.scaling">
+<code class="descname">scaling</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#ParamsScaling.scaling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.ParamsScaling.scaling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ecopann.data_processor.Statistic">
+<em class="property">class </em><code class="descclassname">ecopann.data_processor.</code><code class="descname">Statistic</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#Statistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.Statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Statistics of an array.</p>
+<dl class="attribute">
+<dt id="ecopann.data_processor.Statistic.mean">
+<code class="descname">mean</code><a class="headerlink" href="#ecopann.data_processor.Statistic.mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ecopann.data_processor.Statistic.statistic">
+<code class="descname">statistic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#Statistic.statistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.Statistic.statistic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ecopann.data_processor.Statistic.std">
+<code class="descname">std</code><a class="headerlink" href="#ecopann.data_processor.Statistic.std" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ecopann.data_processor.Statistic.xmax">
+<code class="descname">xmax</code><a class="headerlink" href="#ecopann.data_processor.Statistic.xmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ecopann.data_processor.Statistic.xmin">
+<code class="descname">xmin</code><a class="headerlink" href="#ecopann.data_processor.Statistic.xmin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ecopann.data_processor.cpu2cuda">
+<code class="descclassname">ecopann.data_processor.</code><code class="descname">cpu2cuda</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#cpu2cuda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.cpu2cuda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer data from CPU to GPU.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>array-like</em><em> or </em><em>tensor</em>) – Numpy array or torch tensor.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.9)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code></a> – The data type should be <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Torch tensor.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Tensor</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ecopann.data_processor.cuda2numpy">
+<code class="descclassname">ecopann.data_processor.</code><code class="descname">cuda2numpy</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#cuda2numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.cuda2numpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer data from the torch tensor (on GPU) to the numpy array (on CPU).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ecopann.data_processor.cuda2torch">
+<code class="descclassname">ecopann.data_processor.</code><code class="descname">cuda2torch</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#cuda2torch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.cuda2torch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer data (torch tensor) from GPU to CPU.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ecopann.data_processor.numpy2cuda">
+<code class="descclassname">ecopann.data_processor.</code><code class="descname">numpy2cuda</code><span class="sig-paren">(</span><em>data</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#numpy2cuda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.numpy2cuda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer data from the numpy array (on CPU) to the torch tensor (on GPU).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ecopann.data_processor.numpy2torch">
+<code class="descclassname">ecopann.data_processor.</code><code class="descname">numpy2torch</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#numpy2torch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.numpy2torch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer data from the numpy array (on CPU) to the torch tensor (on CPU).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ecopann.data_processor.torch2cuda">
+<code class="descclassname">ecopann.data_processor.</code><code class="descname">torch2cuda</code><span class="sig-paren">(</span><em>data</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#torch2cuda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.torch2cuda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer data (torch tensor) from CPU to GPU.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ecopann.data_processor.torch2numpy">
+<code class="descclassname">ecopann.data_processor.</code><code class="descname">torch2numpy</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ecopann/data_processor.html#torch2numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ecopann.data_processor.torch2numpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer data from the torch tensor (on CPU) to the numpy array (on CPU).</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="parameter_estimation.html" class="btn btn-neutral float-right" title="Parameter estimation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ann_models.html" class="btn btn-neutral float-left" title="ANN models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Guojian Wang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

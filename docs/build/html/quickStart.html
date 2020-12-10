@@ -1,0 +1,478 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Quick Start &mdash; ECoPANN 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Package Reference" href="package_reference.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> ECoPANN
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-one-dataset">Using one dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-multiple-datasets">Using multiple datasets</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="package_reference.html">Package Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECoPANN</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Quick Start</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/quickStart.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="quick-start">
+<span id="quickstart"></span><h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
+<p>Here we show two examples to illustrate how ECoPANN works, and the readers can archieve their project quickly by modifing the examples. The code used to generate these examples can be downloaded <a class="reference external" href="https://github.com/Guo-Jian-Wang/ecopann/tree/master/examples">here</a>.</p>
+<div class="section" id="using-one-dataset">
+<h2>Using one dataset<a class="headerlink" href="#using-one-dataset" title="Permalink to this headline">¶</a></h2>
+<p>The main process of using ECoPANN includes preparing observational data and theoretical model, training the network, estimating parameters using the ANN chains or the well-trained network.</p>
+<p>Let’s consider a general case, the simple linear model:</p>
+<div class="math notranslate nohighlight">
+\[y = a + b\times x\]</div>
+<p>where <cite>a</cite> and <cite>b</cite> are two free parameters to be estimated, and <cite>y</cite> is the measurement. We first build a class object for this model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimLinear</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">sim_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_y</span><span class="p">(</span><span class="n">sim_params</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The class object must contain a <code class="docutils literal notranslate"><span class="pre">simulate</span></code> method, which is used to simulate samples in the training process.</p>
+</div>
+<p>Then a data sample can be simulated as observation data, by using the function below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a_fid</span><span class="p">,</span> <span class="n">b_fid</span><span class="p">):</span>
+    <span class="n">y_th</span> <span class="o">=</span> <span class="n">SimLinear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sim_y</span><span class="p">([</span><span class="n">a_fid</span><span class="p">,</span> <span class="n">b_fid</span><span class="p">])</span>
+    <span class="n">err_y</span> <span class="o">=</span> <span class="n">y_th</span> <span class="o">*</span> <span class="mf">0.05</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y_th</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">*</span><span class="n">err_y</span>
+    <span class="n">sim_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">err_y</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">sim_data</span><span class="p">,</span> <span class="n">y_th</span>
+
+<span class="n">a_fid</span><span class="p">,</span> <span class="n">b_fid</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.5</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">501</span><span class="p">)</span>
+<span class="n">sim_data</span><span class="p">,</span> <span class="n">y_th</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a_fid</span><span class="p">,</span> <span class="n">b_fid</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sim_data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">yerr</span><span class="o">=</span><span class="n">sim_data</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Simulated data&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y_th</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Fiducial&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/linear_samples.png"><img alt="_images/linear_samples.png" src="_images/linear_samples.png" style="width: 388.2px; height: 292.8px;" /></a>
+</div>
+<p>After that, we can build a model instance and make some settings for parameter initialization:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">SimLinear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">params_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$a$&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+               <span class="s1">&#39;b&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$b$&#39;</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">]}</span>
+<span class="n">param_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">params_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+<span class="n">init_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">params_dict</span></code> is a dictionary that contains information of the parameters, which include the labels, the base values, the minimum values, and the maximum values, and <code class="docutils literal notranslate"><span class="pre">init_params</span></code> is the initial settings of the parameter space.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If the extremum of parameters (the minimum and maximum values) is unknown or there is no extremum, it should be set to
+<code class="docutils literal notranslate"><span class="pre">np.nan</span></code>.</p>
+</div>
+<p>Finally, we can build a predictor and pass the data and model instance to it to train the network:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ecopann.ann</span> <span class="k">as</span> <span class="nn">ann</span>
+
+<span class="n">steps_n</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">num_train</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">epoch</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">ANN</span><span class="p">(</span><span class="n">sim_data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">param_names</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="n">params_dict</span><span class="p">,</span>
+                    <span class="n">cov_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="n">init_params</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span>
+                    <span class="n">num_train</span><span class="o">=</span><span class="n">num_train</span><span class="p">,</span> <span class="n">local_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">steps_n</span><span class="o">=</span><span class="n">steps_n</span><span class="p">)</span>
+
+<span class="n">predictor</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the training process, the results which include the network model, the predicted ANN chain, and some hyperparameters will be saved to the indicated folder. After the training process, we can plot and save the predicted parameters in each step by using the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">predictor</span><span class="o">.</span><span class="n">plot_steps</span><span class="p">()</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">save_steps</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/linear_steps.png"><img alt="_images/linear_steps.png" src="_images/linear_steps.png" style="width: 589.4px; height: 243.95px;" /></a>
+</div>
+<p>and can also plot the contours of the estimated parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">predictor</span><span class="o">.</span><span class="n">plot_contours</span><span class="p">(</span><span class="n">fill_contours</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">save_contours</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/linear_contour.png"><img alt="_images/linear_contour.png" src="_images/linear_contour.png" style="width: 325.85px; height: 341.6px;" /></a>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The parameters are estimated using the chains after the burn-in phase, so the <code class="docutils literal notranslate"><span class="pre">steps_n</span></code> should be set large enough, and
+the <code class="docutils literal notranslate"><span class="pre">init_params</span></code> should also be set large enough to contain the true parameters.</p>
+<p class="last">Also, the number of the training set (<code class="docutils literal notranslate"><span class="pre">num_train</span></code>) and the <code class="docutils literal notranslate"><span class="pre">epoch</span></code> should be set large enough to ensure the network
+learns a reliable mapping. See the <code class="docutils literal notranslate"><span class="pre">ecopann.ann.ANN</span></code> module in <a class="reference internal" href="parameter_estimation.html#parameter-estimation"><span class="std std-ref">Parameter estimation</span></a> for details.</p>
+</div>
+<p>In the training process, the results of each step will be saved, so it is possible to estimate parameters before the ending of the training process. To do this, one needs to build another predictor and pass the random number of the first step (<code class="docutils literal notranslate"><span class="pre">randn_num</span></code>) that identifies the saved results to the predictor:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ecopann.cosmic_params</span> <span class="k">as</span> <span class="nn">cosmic_params</span>
+<span class="kn">import</span> <span class="nn">ecopann.coplot.plot_contours</span> <span class="k">as</span> <span class="nn">plc</span>
+
+<span class="n">randn_num</span> <span class="o">=</span> <span class="s1">&#39;1.06304&#39;</span><span class="p">;</span> <span class="n">steps_n</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">RePredict</span><span class="p">(</span><span class="n">sim_data</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+                          <span class="n">randn_num</span><span class="o">=</span><span class="n">randn_num</span><span class="p">,</span> <span class="n">steps_n</span><span class="o">=</span><span class="n">steps_n</span><span class="p">,</span>
+                          <span class="n">params_dict</span><span class="o">=</span><span class="n">params_dict</span><span class="p">)</span>
+
+<span class="n">predictor</span><span class="o">.</span><span class="n">from_chain</span><span class="p">()</span>
+<span class="c1"># predictor.from_net()</span>
+<span class="n">chain_ann</span> <span class="o">=</span> <span class="n">predictor</span><span class="o">.</span><span class="n">chain_ann</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">plot_steps</span><span class="p">()</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">plot_contours</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">fill_contours</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">save_steps</span><span class="p">()</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">save_contours</span><span class="p">()</span>
+
+<span class="n">labels</span> <span class="o">=</span> <span class="n">cosmic_params</span><span class="o">.</span><span class="n">ParamsProperty</span><span class="p">(</span><span class="n">param_names</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="n">params_dict</span><span class="p">)</span><span class="o">.</span><span class="n">labels</span>
+<span class="n">plc</span><span class="o">.</span><span class="n">Contours</span><span class="p">(</span><span class="n">chain_ann</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span><span class="n">fill_contours</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">best_values</span><span class="o">=</span><span class="p">[</span><span class="n">a_fid</span><span class="p">,</span> <span class="n">b_fid</span><span class="p">],</span><span class="n">show_best_value_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">steps_n</span></code> should be set according to the steps completed.</p>
+</div>
+<div class="section" id="using-multiple-datasets">
+<h2>Using multiple datasets<a class="headerlink" href="#using-multiple-datasets" title="Permalink to this headline">¶</a></h2>
+<p>In practical scientific research, we may need to use multiple data sets to constrain the parameters, which is also possible for ECoPANN. To illustrate this, we constrain parameters of <span class="math notranslate nohighlight">\(w\)</span>CDM cosmological model using the observations of Type Ia supernovae (SNe Ia) and  baryon acoustic oscillations (BAO). We first build a class object for this model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">integrate</span>
+
+<span class="k">class</span> <span class="nc">Simulate_SNe_BAO</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z_SNe</span><span class="p">,</span> <span class="n">z_BAO</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_SNe</span> <span class="o">=</span> <span class="n">z_SNe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_BAO</span> <span class="o">=</span> <span class="n">z_BAO</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mf">2.99792458e5</span>
+
+    <span class="k">def</span> <span class="nf">fwCDM_E</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">omm</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">1.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">omm</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">omm</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">w</span><span class="p">))</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fwCDM_dl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">omm</span><span class="p">,</span> <span class="n">H0</span><span class="o">=</span><span class="mi">70</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">dl_i</span><span class="p">(</span><span class="n">z_i</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">omm</span><span class="p">,</span> <span class="n">H0</span><span class="p">):</span>
+            <span class="n">dll</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fwCDM_E</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">z_i</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">omm</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dl_i</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">z_i</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">*</span><span class="n">dll</span><span class="o">/</span><span class="n">H0</span>
+            <span class="k">return</span> <span class="n">dl_i</span>
+        <span class="n">dl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">dl_i</span><span class="p">)(</span><span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">omm</span><span class="p">,</span> <span class="n">H0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dl</span>
+
+    <span class="k">def</span> <span class="nf">fwCDM_mu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="n">w</span><span class="p">,</span> <span class="n">omm</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="n">dl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwCDM_dl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_SNe</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">omm</span><span class="p">)</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="mi">5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">dl</span><span class="p">)</span> <span class="o">+</span> <span class="mi">25</span>
+        <span class="k">return</span> <span class="n">mu</span>
+
+    <span class="k">def</span> <span class="nf">fwCDM_Hz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="n">w</span><span class="p">,</span> <span class="n">omm</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="n">H0</span> <span class="o">=</span> <span class="mi">70</span>
+        <span class="n">hz</span> <span class="o">=</span> <span class="n">H0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">omm</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">z_BAO</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">omm</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">z_BAO</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">w</span><span class="p">))</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">hz</span>
+
+    <span class="k">def</span> <span class="nf">fwCDM_DA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="n">w</span><span class="p">,</span> <span class="n">omm</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="n">dl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwCDM_dl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_BAO</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">omm</span><span class="p">)</span>
+        <span class="n">da</span> <span class="o">=</span> <span class="n">dl</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">z_BAO</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="n">da</span>
+
+    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">):</span>
+        <span class="n">zz</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">z_SNe</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_BAO</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_BAO</span><span class="p">]</span>
+        <span class="n">yy</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fwCDM_mu</span><span class="p">(</span><span class="n">sim_params</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwCDM_Hz</span><span class="p">(</span><span class="n">sim_params</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwCDM_DA</span><span class="p">(</span><span class="n">sim_params</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">zz</span><span class="p">,</span> <span class="n">yy</span>
+</pre></div>
+</div>
+<p>Note that the measurement of SNe Ia is the distance modulus <span class="math notranslate nohighlight">\(\mu(z)\)</span> (<code class="docutils literal notranslate"><span class="pre">fwCDM_mu</span></code>), and the measurements of BAO are the Hubble parameter <span class="math notranslate nohighlight">\(H(z)\)</span> (<code class="docutils literal notranslate"><span class="pre">fwCDM_Hz</span></code>) and the angular diameter distance <span class="math notranslate nohighlight">\(D_A(z)\)</span> (<code class="docutils literal notranslate"><span class="pre">fwCDM_DA</span></code>). So, the outputs of the <code class="docutils literal notranslate"><span class="pre">simulate</span></code> method are <span class="math notranslate nohighlight">\(\mu(z)\)</span>, <span class="math notranslate nohighlight">\(H(z)\)</span>, and <span class="math notranslate nohighlight">\(D_A(z)\)</span>. The parameters to be constrained are <span class="math notranslate nohighlight">\(w\)</span> (<code class="docutils literal notranslate"><span class="pre">w</span></code>) and <span class="math notranslate nohighlight">\(\Omega_m\)</span> (<code class="docutils literal notranslate"><span class="pre">omm</span></code>). Then we generate mock observational using the method below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sim_SNe</span><span class="p">(</span><span class="n">fid_params</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]):</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.1</span><span class="o">+</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">1.7</span><span class="o">+</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">N_per_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">69</span><span class="p">,</span><span class="mi">208</span><span class="p">,</span><span class="mi">402</span><span class="p">,</span><span class="mi">223</span><span class="p">,</span><span class="mi">327</span><span class="p">,</span><span class="mi">136</span><span class="p">,</span><span class="mi">136</span><span class="p">,</span><span class="mi">136</span><span class="p">,</span><span class="mi">136</span><span class="p">,</span><span class="mi">136</span><span class="p">,</span><span class="mi">136</span><span class="p">,</span><span class="mi">136</span><span class="p">,</span><span class="mi">136</span><span class="p">,</span><span class="mi">136</span><span class="p">,</span><span class="mi">136</span><span class="p">,</span><span class="mi">136</span><span class="p">])</span>
+    <span class="n">err_stat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="mf">0.08</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mf">0.09</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="mf">0.07</span><span class="o">*</span><span class="n">z</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N_per_bin</span><span class="p">)</span>
+    <span class="n">err_sys</span> <span class="o">=</span> <span class="mf">0.01</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">z</span><span class="p">)</span><span class="o">/</span><span class="mf">1.8</span>
+    <span class="n">err_tot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">err_stat</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">err_sys</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+    <span class="n">sim_mu</span> <span class="o">=</span> <span class="n">Simulate_SNe_BAO</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">fwCDM_mu</span><span class="p">(</span><span class="n">fid_params</span><span class="p">)</span>
+    <span class="n">sne</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">z</span><span class="p">,</span> <span class="n">sim_mu</span><span class="p">,</span> <span class="n">err_tot</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">sne</span>
+
+<span class="k">def</span> <span class="nf">sim_BAO</span><span class="p">(</span><span class="n">fid_params</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]):</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2264208</span> <span class="p">,</span> <span class="mf">0.32872246</span><span class="p">,</span> <span class="mf">0.42808132</span><span class="p">,</span> <span class="mf">0.53026194</span><span class="p">,</span> <span class="mf">0.62958298</span><span class="p">,</span>
+                  <span class="mf">0.72888132</span><span class="p">,</span> <span class="mf">0.82817967</span><span class="p">,</span> <span class="mf">0.93030733</span><span class="p">,</span> <span class="mf">1.02958298</span><span class="p">,</span> <span class="mf">1.12885863</span><span class="p">,</span>
+                  <span class="mf">1.22811158</span><span class="p">,</span> <span class="mf">1.33017872</span><span class="p">,</span> <span class="mf">1.42938629</span><span class="p">,</span> <span class="mf">1.53137778</span><span class="p">,</span> <span class="mf">1.63045674</span><span class="p">,</span>
+                  <span class="mf">1.72942222</span><span class="p">,</span> <span class="mf">1.80803026</span><span class="p">])</span>
+    <span class="n">errOverHz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01824</span><span class="p">,</span> <span class="mf">0.01216</span><span class="p">,</span> <span class="mf">0.00992</span><span class="p">,</span> <span class="mf">0.00816</span><span class="p">,</span> <span class="mf">0.00704</span><span class="p">,</span> <span class="mf">0.00656</span><span class="p">,</span> <span class="mf">0.0064</span> <span class="p">,</span>
+                          <span class="mf">0.00624</span><span class="p">,</span> <span class="mf">0.00656</span><span class="p">,</span> <span class="mf">0.00704</span><span class="p">,</span> <span class="mf">0.008</span>  <span class="p">,</span> <span class="mf">0.00944</span><span class="p">,</span> <span class="mf">0.01168</span><span class="p">,</span> <span class="mf">0.0152</span> <span class="p">,</span>
+                          <span class="mf">0.02096</span><span class="p">,</span> <span class="mf">0.02992</span><span class="p">,</span> <span class="mf">0.05248</span><span class="p">])</span>
+    <span class="n">errOverDA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0112</span> <span class="p">,</span> <span class="mf">0.00752</span><span class="p">,</span> <span class="mf">0.00608</span><span class="p">,</span> <span class="mf">0.00496</span><span class="p">,</span> <span class="mf">0.00432</span><span class="p">,</span> <span class="mf">0.00416</span><span class="p">,</span> <span class="mf">0.004</span>  <span class="p">,</span>
+                          <span class="mf">0.004</span>  <span class="p">,</span> <span class="mf">0.00432</span><span class="p">,</span> <span class="mf">0.00464</span><span class="p">,</span> <span class="mf">0.00544</span><span class="p">,</span> <span class="mf">0.00672</span><span class="p">,</span> <span class="mf">0.00848</span><span class="p">,</span> <span class="mf">0.01136</span><span class="p">,</span>
+                          <span class="mf">0.01584</span><span class="p">,</span> <span class="mf">0.02272</span><span class="p">,</span> <span class="mf">0.04016</span><span class="p">])</span>
+
+    <span class="n">sim_Hz</span> <span class="o">=</span> <span class="n">Simulate_SNe_BAO</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">fwCDM_Hz</span><span class="p">(</span><span class="n">fid_params</span><span class="p">)</span>
+    <span class="n">sim_Hz_err</span> <span class="o">=</span> <span class="n">sim_Hz</span> <span class="o">*</span> <span class="n">errOverHz</span>
+    <span class="n">sim_DA</span> <span class="o">=</span> <span class="n">Simulate_SNe_BAO</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">fwCDM_DA</span><span class="p">(</span><span class="n">fid_params</span><span class="p">)</span>
+    <span class="n">sim_DA_err</span> <span class="o">=</span> <span class="n">sim_DA</span> <span class="o">*</span> <span class="n">errOverDA</span>
+    <span class="n">sim_Hz_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">z</span><span class="p">,</span> <span class="n">sim_Hz</span><span class="p">,</span> <span class="n">sim_Hz_err</span><span class="p">]</span>
+    <span class="n">sim_DA_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">z</span><span class="p">,</span> <span class="n">sim_DA</span><span class="p">,</span> <span class="n">sim_DA_err</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">sim_Hz_all</span><span class="p">,</span> <span class="n">sim_DA_all</span>
+
+<span class="n">fid_params</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+<span class="n">sim_mu</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">sim_SNe</span><span class="p">(</span><span class="n">fid_params</span><span class="o">=</span><span class="n">fid_params</span><span class="p">)</span>
+<span class="n">sim_Hz</span><span class="p">,</span> <span class="n">sim_DA</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">sim_BAO</span><span class="p">(</span><span class="n">fid_params</span><span class="o">=</span><span class="n">fid_params</span><span class="p">)</span>
+<span class="n">z_SNe</span> <span class="o">=</span> <span class="n">sim_mu</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">z_BAO</span> <span class="o">=</span> <span class="n">sim_Hz</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>After that, we can build a model instance and make some settings for parameter initialization:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">Simulate_SNe_BAO</span><span class="p">(</span><span class="n">z_SNe</span><span class="p">,</span> <span class="n">z_BAO</span><span class="p">)</span>
+<span class="n">init_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]])</span>
+<span class="n">params_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;omm&#39;</span>     <span class="p">:</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\Omega_m$&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+               <span class="s1">&#39;w&#39;</span>       <span class="p">:</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$w$&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]}</span>
+<span class="n">param_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">params_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+</pre></div>
+</div>
+<p>Finally, we can build a predictor and pass the data and model instance to it to train the network:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">steps_n</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">num_train</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">epoch</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">ANN</span><span class="p">([</span><span class="n">sim_mu</span><span class="p">,</span> <span class="n">sim_Hz</span><span class="p">,</span> <span class="n">sim_DA</span><span class="p">],</span> <span class="n">model</span><span class="p">,</span> <span class="n">param_names</span><span class="p">,</span> <span class="n">params_dict</span><span class="o">=</span><span class="n">params_dict</span><span class="p">,</span>
+                    <span class="n">cov_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_params</span><span class="o">=</span><span class="n">init_params</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span>
+                    <span class="n">num_train</span><span class="o">=</span><span class="n">num_train</span><span class="p">,</span> <span class="n">local_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">steps_n</span><span class="o">=</span><span class="n">steps_n</span><span class="p">)</span>
+
+<span class="n">predictor</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;SNe_BAO&#39;</span><span class="p">)</span>
+<span class="n">chain_ann</span> <span class="o">=</span> <span class="n">predictor</span><span class="o">.</span><span class="n">chain_ann</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">plot_steps</span><span class="p">()</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">plot_contours</span><span class="p">(</span><span class="n">fill_contours</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">save_steps</span><span class="p">()</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">save_contours</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/SNe_BAO_steps.png"><img alt="_images/SNe_BAO_steps.png" src="_images/SNe_BAO_steps.png" style="width: 588.35px; height: 240.1px;" /></a>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/SNe_BAO_contour.png"><img alt="_images/SNe_BAO_contour.png" src="_images/SNe_BAO_contour.png" style="width: 324.45px; height: 343.0px;" /></a>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The data used here have no covariance, so the covariance matrix (<code class="docutils literal notranslate"><span class="pre">cov_matrix</span></code>) is set to <code class="docutils literal notranslate"><span class="pre">None</span></code>. If the data have
+covariance matrices, such as <code class="docutils literal notranslate"><span class="pre">cov1</span></code>, <code class="docutils literal notranslate"><span class="pre">cov2</span></code>, and <code class="docutils literal notranslate"><span class="pre">cov3</span></code>, they should be passed to the predictor by setting
+<code class="docutils literal notranslate"><span class="pre">cov_matrix=[cov1,</span> <span class="pre">cov2,</span> <span class="pre">cov3]</span></code>. Furthermore, if some data sets have no covariance, such as the first data set, the
+setting of the covariance matrix should be <code class="docutils literal notranslate"><span class="pre">cov_matrix=[None,</span> <span class="pre">cov2,</span> <span class="pre">cov3]</span></code>.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="package_reference.html" class="btn btn-neutral float-right" title="Package Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Guojian Wang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

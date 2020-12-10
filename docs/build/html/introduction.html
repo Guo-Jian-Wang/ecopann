@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction &mdash; ECoPANN 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="ECoPANN" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> ECoPANN
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#a-brief-introduction-to-ann">A brief introduction to ANN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#network-architecture">Network architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#training-process">Training process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-inference">Parameter inference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickStart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="package_reference.html">Package Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ECoPANN</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Introduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/introduction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction">
+<span id="id1"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>ECoPANN is designed to estimate parameters directly from the observational data sets, which is a fully ANN-based framework that is different from the Bayesian inference.</p>
+<p>This part will briefly show you the basic principle of ECoPANN, however, we recommend that readers read our published <a class="reference external" href="https://arxiv.org/abs/2005.07089">paper</a> for more details.</p>
+<div class="section" id="a-brief-introduction-to-ann">
+<h2>A brief introduction to ANN<a class="headerlink" href="#a-brief-introduction-to-ann" title="Permalink to this headline">¶</a></h2>
+<p>An ANN, also called a neural network (NN), is a mathematical model that is inspired by the structure and functions of biological NNs, and it generally consists of an input layer, hidden layers, and an output layer (see Figure 1 below).</p>
+<p>The ANN, composed of linear and nonlinear transformations of input variables, has been proven to be a “universal approximator”, which can represent a great variety of functions. This powerful property of the ANN allows its wide use in regression and estimation tasks.</p>
+<p>The ANN aims to make a mapping from the input data to the output data; thus, for the task of parameter inference, the ANN actually learns a mapping between the measurement and the corresponding cosmological parameters.</p>
+</div>
+<div class="section" id="network-architecture">
+<h2>Network architecture<a class="headerlink" href="#network-architecture" title="Permalink to this headline">¶</a></h2>
+<p>There are two network structures used in ECoPANN: a) a single fully connected network with a few hidden layers, which is usually called multilayer perceptron (MLP, see Figure 1 below); b) a multibranch network (see Figure 2 below).</p>
+<p>MLP can accept a set of data sets as inputs and output the corresponding cosmological (or theoretical) model parameters. Therefore, MLP is used to estimate parameters from one set of data sets.</p>
+<div class="figure align-center" id="id2">
+<a class="reference internal image-reference" href="_images/mlp.png"><img alt="_images/mlp.png" src="_images/mlp.png" style="width: 384.45px; height: 271.92px;" /></a>
+<p class="caption"><span class="caption-text">Figure 1. General structure of an MLP (<a class="reference external" href="https://doi.org/10.3847/1538-4365/aba190">Wang et al. (2020)</a>).</span></p>
+</div>
+<p>For a multibranch network, each branch can accept a set of data sets as inputs and combine the information in the hidden layers and output the corresponding cosmological (or theoretical) model parameters. Therefore, multibranch network can accept multiple sets of data sets and thus can achieve a joint constraint on parameters using multiple sets of data sets.</p>
+<div class="figure align-center" id="id3">
+<a class="reference internal image-reference" href="_images/multiBranch.png"><img alt="_images/multiBranch.png" src="_images/multiBranch.png" style="width: 466.0px; height: 328.8px;" /></a>
+<p class="caption"><span class="caption-text">Figure 2. General structure of a multibranch network (Wang et al. (2020)).</span></p>
+</div>
+</div>
+<div class="section" id="training-process">
+<h2>Training process<a class="headerlink" href="#training-process" title="Permalink to this headline">¶</a></h2>
+<p>The training process (or the working principle) of ECoPANN is shown in the schematic diagram below. The key steps of the training process are as follows:</p>
+<ol class="arabic simple">
+<li>Set initial conditions for cosmological parameters, which are intervals of parameters.</li>
+<li>Build a cosmological model instance and pass it to ECoPANN, and the training set will be simulated automatically by using the instance.</li>
+<li>Pass the errors of the observational data to ECoPANN, and then random noise will be automatically added to the training set. Furthermore, the training set will be preprocessed.</li>
+<li>After the training sets are preprocessed, an ANN model will be built automatically according to the size of the mock data.</li>
+<li>Feed the training set to the ANN model, and the model will be well trained after thousands of epochs.</li>
+<li>Simulate random samples using the observational data and feed them to the well-trained ANN model, and then a chain of parameters will be produced.</li>
+<li>Posterior distribution of parameters can be further obtained by using the chain. Then, the parameter space to be learned will be updated according to the posterior distribution of parameters.</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/ecopann_schematic.png"><img alt="_images/ecopann_schematic.png" src="_images/ecopann_schematic.png" style="width: 585.9px; height: 342.9px;" /></a>
+</div>
+</div>
+<div class="section" id="parameter-inference">
+<h2>Parameter inference<a class="headerlink" href="#parameter-inference" title="Permalink to this headline">¶</a></h2>
+<p>After the seven steps illustrated above, we can obtain an ANN chain and the corresponding posterior distribution of parameters. However, the initial conditions of the parameters may not match the true parameters, so this posterior distribution may be a biased result.</p>
+<p>To solve this problem, we need to do several realizations of the pipeline and update the parameter space after each realization. In the early part of the training process, the chain will not stable and we call this part burn-in. After several realizations, the posterior distribution of parameters will reach stable values, and the chains can be used for parameter inference.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="ECoPANN" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Guojian Wang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
