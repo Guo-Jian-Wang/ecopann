@@ -29,6 +29,8 @@ def loss_funcs(name='L1'):
     return lf
 
 class Train(object):
+    """Train the network.
+    """
     def __init__(self,net,loss_func='L1',iteration=10000,optimizer='Adam'):
         self.net = net
         self.loss_func = loss_funcs(name=loss_func)

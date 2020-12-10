@@ -6,7 +6,7 @@ Training sets
 ecopann.cosmic_params
 ----------------------
 
-.. automodule:: ecopann.cosmic\_params
+.. automodule:: ecopann.cosmic_params
     :members:
     :undoc-members:
     :show-inheritance:
@@ -14,7 +14,7 @@ ecopann.cosmic_params
 ecopann.data_simulator
 -----------------------
 
-.. automodule:: ecopann.data\_simulator
+.. automodule:: ecopann.data_simulator
     :members:
     :undoc-members:
     :show-inheritance:
@@ -22,7 +22,7 @@ ecopann.data_simulator
 ecopann.data_processor
 -----------------------
 
-.. automodule:: ecopann.data\_processor
+.. automodule:: ecopann.data_processor
     :members:
     :undoc-members:
     :show-inheritance:
