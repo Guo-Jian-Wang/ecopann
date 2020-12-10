@@ -3,9 +3,7 @@ ECoPANN
 
 **ECoPANN (Estimating Cosmological Parameters with Artificial Neural Network)**
 
-ECoPANN is a new method to estimate cosmological parameters accurately based on ANN.
-
-It is an alternative to the traditional `Markov chain Monte Carlo (MCMC) <https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo>`_ method, and can obtain almost the same results as MCMC.
+ECoPANN is a new method to estimate cosmological parameters accurately based on ANN. It is an alternative to the traditional `Markov chain Monte Carlo (MCMC) <https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo>`_ method, and can obtain almost the same results as MCMC.
 
 ECoPANN can be applied to the research of cosmology and even other broader scientific fields.
 
@@ -40,8 +38,8 @@ and some commonly used modules:
 * time
 
 
-Package managers
-----------------
+Installation
+------------
 
 You can install ecopann by using pip::
 
