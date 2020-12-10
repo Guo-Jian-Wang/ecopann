@@ -11,7 +11,7 @@ ecopann.ann
     :undoc-members:
     :show-inheritance:
 
-ecopann.space\_updater
+ecopann.space_updater
 ----------------------
 
 .. automodule:: ecopann.space_updater
