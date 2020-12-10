@@ -55,3 +55,26 @@ class LrDecay:
             decay_steps = self.iteration
         lr_new = (self.lr-self.lr_min) * (1 - self.iter_mid*1.0/decay_steps)**power + self.lr_min
         return lr_new
+
+
+def loss_funcs(name='L1'):
+    """Some loss functions.
+    
+    Parameters
+    ----------
+    name : str
+        Abbreviation of loss function name. 'L1', 'MSE', or 'SmoothL1'. Default: 'L1'.
+
+    Returns
+    -------
+    object
+        The corresponding loss function.
+    """
+    import torch
+    if name=='L1':
+        lf = torch.nn.L1Loss()
+    elif name=='MSE':
+        lf = torch.nn.MSELoss()
+    elif name=='SmoothL1':
+        lf = torch.nn.SmoothL1Loss()
+    return lf
