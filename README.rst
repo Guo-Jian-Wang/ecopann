@@ -19,7 +19,7 @@ The documentation can be found at `ecopann.readthedocs.io <https://ecopann.readt
 Attribution
 -----------
 
-If you use this code in your research, please cite `Guo-Jian Wang, Si-Yao Li, Jun-Qing Xia (2020) <https://doi.org/10.3847/1538-4365/aba190>`_.
+If you use this code in your research, please cite `Guo-Jian Wang, Si-Yao Li, Jun-Qing Xia, ApJS, 249, 25 (2020) <https://doi.org/10.3847/1538-4365/aba190>`_.
 
 
 Dependencies
