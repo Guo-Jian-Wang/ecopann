@@ -35,7 +35,7 @@ where `a` and `b` are two free parameters to be estimated, and `y` is the measur
 .. Note::
     The class object must contain a ``simulate`` method, which is used to simulate samples in the training process.
 
-Then a data sample can be simulated as observation data, by using the function below::
+Then a data sample can be simulated as observational data, by using the function below::
     
     import numpy as np
     import matplotlib.pyplot as plt

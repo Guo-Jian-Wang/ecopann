@@ -28,7 +28,7 @@ As a general method of parameter estimation, ECoPANN can be used for research in
 How to use ECoPANN
 ==================
 
-First, you are probably going to needs see the :ref:`introduction` guide to learn the basic principles of ECoPANN. After that, you may need to install ecopann on your computer according to the :ref:`installation` guide, and then following the :ref:`quickStart` guide to learn how to use it. If you need more detailed information about a specific function, the :ref:`package_reference` below should have what you need.
+First, you are probably going to needs to see the :ref:`introduction` guide to learn the basic principles of ECoPANN. After that, you may need to install ecopann on your computer according to the :ref:`installation` guide, and then following the :ref:`quickStart` guide to learn how to use it. If you need more detailed information about a specific function, the :ref:`package_reference` below should have what you need.
 
 
 Contents:

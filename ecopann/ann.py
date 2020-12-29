@@ -22,7 +22,7 @@ class ANN(plotter.Plotters):
     cosmic_model : cosmological (or theoretical) model instance
         A cosmological (or theoretical) model instance that is used to simulate training set,
         it should contains a 'simulate' method, and 'simulate' should accept input of cosmological parameters,
-        if you use the local data sets, it should also contain 'load_params' and 'load_sample' methods.
+        if you use local data sets, it should also contain 'load_params' and 'load_sample' methods.
     param_names : list
         A list which contains the parameter names, e.g. ['H0','Omega_m','ombh2','omch2','tau','As','ns'].
     params_dict : dict or None, optional
