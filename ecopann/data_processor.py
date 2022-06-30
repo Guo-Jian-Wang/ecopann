@@ -65,66 +65,76 @@ def cpu2cuda(data):
         raise TypeError('The data type should be numpy.ndarray or torch.Tensor')
 
 #%% parameter scaling
+#updated
 class ParamsScaling(object):
     """Data preprocessing of cosmological parameters.
     
     Parameters
     ----------
-    parameters : array-like
-        Cosmological parameters of the training set, with shape (N, n), where N is the number of the training set and n is the number of parameters.
-    param_names : list
-        A list which contains the parameter names, e.g. ['H0','Omega_m','ombh2','omch2','tau','As','ns'].
-    params_dict : dict or None, optional
-        Information of cosmological parameters that include the labels, the base values, the minimum values, 
-        and the maximum values. See :func:`~.cosmic_params.params_dict_zoo`. Default: None
+    params_base : array-like
+        A 1-D array that contains the base values of the cosmological parameters.
     """
-    def __init__(self, parameters, param_names, params_dict=None):
-        self.params = parameters
-        self.params_base = cosmic_params.ParamsProperty(param_names,params_dict=params_dict).params_base
+    def __init__(self, params_base):
+        self.params_base = params_base
    
-    def scaling(self):
-        return self.params / self.params_base
+    def scaling(self, params):
+        return params / self.params_base
    
-    def inverseScaling(self):
-        return self.params * self.params_base
+    def inverseScaling(self, params):
+        return params * self.params_base
 
 #%% statistic of a numpy array
 class Statistic(object):
     """ Statistics of an array. """
     def __init__(self, x):
         self.x = x
+        self.dtype = type(x)
     
     @property
     def mean(self):
-        return np.mean(self.x)
+        if self.dtype==np.ndarray:
+            return float(np.mean(self.x))
+        elif self.dtype==torch.Tensor:
+            return torch.mean(self.x)
     
     @property
     def xmin(self):
-        return np.min(self.x)
+        if self.dtype==np.ndarray:
+            return float(np.min(self.x))
+        elif self.dtype==torch.Tensor:
+            return torch.min(self.x)
     
     @property
     def xmax(self):
-        return np.max(self.x)
+        if self.dtype==np.ndarray:
+            return float(np.max(self.x))
+        elif self.dtype==torch.Tensor:
+            return torch.max(self.x)
     
     @property
     def std(self):
-        return np.std(self.x)
+        if self.dtype==np.ndarray:
+            return float(np.std(self.x))
+        elif self.dtype==torch.Tensor:
+            return torch.std(self.x)
     
     def statistic(self):
-        st = {'min' : float(self.xmin),
-              'max' : float(self.xmax),
-              'mean': float(self.mean),
-              'std' : float(self.std),
+        st = {'min' : self.xmin,
+              'max' : self.xmax,
+              'mean': self.mean,
+              'std' : self.std,
               }
         return st
 
 #%% normalization & inverse normalization
 class Normalize(object):
     """ Normalize data. """
-    def __init__(self, x, statistic={}, norm_type='z_score'):
+    def __init__(self, x, statistic={}, norm_type='z_score', a=0, b=1):
         self.x = x
         self.stati = statistic
         self.norm_type = norm_type
+        self.a = a #only for minmax
+        self.b = b #only for minmax
     
     def minmax(self):
         """min-max normalization
@@ -132,7 +142,7 @@ class Normalize(object):
         Rescaling the range of features to scale the range in [0, 1] or [a,b]
         https://en.wikipedia.org/wiki/Feature_scaling
         """
-        return (self.x-self.stati['min'])/(self.stati['max']-self.stati['min'])
+        return self.a + (self.x-self.stati['min'])*(self.b-self.a) / (self.stati['max']-self.stati['min'])
     
     def mean(self):
         """ mean normalization """
@@ -141,19 +151,21 @@ class Normalize(object):
     def z_score(self):
         """ standardization/z-score/zero-mean normalization """
         return (self.x-self.stati['mean'])/self.stati['std']
-
+    
     def norm(self):
         return eval('self.%s()'%self.norm_type)
 
 class InverseNormalize(object):
     """ Inverse transformation of class :class:`~Normalize`. """
-    def __init__(self, x1, statistic={}, norm_type='z_score'):
+    def __init__(self, x1, statistic={}, norm_type='z_score', a=0, b=1):
         self.x = x1
         self.stati = statistic
         self.norm_type = norm_type
+        self.a = a #only for minmax
+        self.b = b #only for minmax
     
     def minmax(self):
-        return self.x * (self.stati['max']-self.stati['min']) + self.stati['min']
+        return (self.x-self.a) * (self.stati['max']-self.stati['min']) / (self.b-self.a) + self.stati['min']
     
     def mean(self):
         return self.x * (self.stati['max']-self.stati['min']) + self.stati['mean']

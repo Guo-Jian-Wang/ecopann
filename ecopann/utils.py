@@ -38,7 +38,7 @@ def mkdir(path):
     >>> mkdir('/home/UserName/test')
     >>> mkdir('test/one')
     >>> mkdir('../test/one')
-    """    
+    """
     #remove the blank space in the before and after strings
     #path.strip() is used to remove the characters in the beginning and the end of the character string
 #    path = path.strip()
@@ -128,6 +128,8 @@ class Logger(object):
     def write(self, message):
         self.terminal.write(message)
         self.log.write(message)
+        self.terminal.flush()
+        self.log.flush()
 
     def flush(self):
         pass
