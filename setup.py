@@ -37,12 +37,10 @@ setup(
     author_email = "gjwang@mail.bnu.edu.cn",
 
 #    packages = find_packages(),
-    packages = ["ecopann", "ecopann/coplot", "examples"],
+    packages = ["ecopann", "examples"],
     include_package_data = True,
     data_files = ["examples/data/Union2.1.txt",
-                  # "examples/data/Union21_covariance_systematics.txt",
                   "examples/data/MCMC_chains/chain_fwCDM_2params.npy",
-                  # "examples/data/MCMC_chains/chain_fwCDM_2params_cov.npy",
                   ],
     platforms = "any",
     install_requires = []
