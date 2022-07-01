@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+# import sys
+# sys.path.append('../../../..')
+# import pycode.coplot_master.coplot.plot_settings as pls
+
+import coplot.plot_settings as pls
+
 from . import data_processor as dp
 from . import data_simulator as ds
 from . import space_updater as su
@@ -11,13 +17,6 @@ from torch.autograd import Variable
 import torch.multiprocessing as mp
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-# import coplot.plot_settings as pls
-
-import sys
-sys.path.append('../../../..')
-import pycode.coplot_master.coplot.plot_settings as pls
 
 
 #%% multilayer perceptron (MLP)
