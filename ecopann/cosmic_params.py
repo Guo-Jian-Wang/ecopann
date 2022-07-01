@@ -5,15 +5,14 @@ import numpy as np
 
 #%%parameters zoo
 def params_dict_zoo():
-    """Information of cosmological parameters that include the labels, the minimum values, and the maximum values: [label, base value, minimum, maximum]
+    """Information of cosmological parameters that include the labels and physical limits: [label, limit_min, limit_max]
     
-    The label is used to plot figures.
-    
-    The extremum of parameters is used to update parameter space in the training process.
+    The label is used to plot figures. 
+    The physical limits are used to ensure that the simulated parameters have physical meaning.
     
     Note
     ----
-    If the extremum of parameters is unknown or there is no extremum, it should be set to np.nan.
+    If the physical limits of parameters is unknown or there is no physical limits, it should be set to np.nan.
     """
     return {'H0'      : [r'$H_0$', np.nan, np.nan], #the Hubble constant
             'omm'     : [r'$\Omega_{\rm m}$', 0.0, 1.0], #the matter density parameter

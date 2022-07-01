@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import sys
-sys.path.append('../../../..')
-import pycode.coplot_master.coplot.plot_contours as plc
+# import sys
+# sys.path.append('../../../..')
+# import pycode.coplot_master.coplot.plot_contours as plc
+
+import coplot.plot_contours as plc
 
 from . import space_updater as su
 from . import cosmic_params, utils
