@@ -3,7 +3,9 @@
 from . import data_processor as dp
 from . import data_simulator as ds
 from . import space_updater as su
-from . import train, evaluate, optimize, fcnet, nodeframe, utils, cosmic_params, conv_fc
+# from . import train, evaluate, optimize, fcnet, nodeframe, utils, cosmic_params, conv_fc
+from . import train, evaluate, optimize, fcnet, nodeframe, utils, cosmic_params
+
 import torch
 from torch.autograd import Variable
 import torch.multiprocessing as mp
