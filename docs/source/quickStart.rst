@@ -223,18 +223,18 @@ Note that the measurement of SNe Ia is the distance modulus :math:`\mu(z)` (``fw
         return sim_Hz_all, sim_DA_all
 
     fid_params = [-1, 0.3]
-    sim_mu = simulator.sim_SNe(fid_params=fid_params)
-    sim_Hz, sim_DA = simulator.sim_BAO(fid_params=fid_params)
+    sim_mu = sim_SNe(fid_params=fid_params)
+    sim_Hz, sim_DA = sim_BAO(fid_params=fid_params)
     z_SNe = sim_mu[:,0]
     z_BAO = sim_Hz[:,0]
 
 After that, we can build a model instance and make some settings for parameter initialization::
 
-    model = simulator.Simulate_SNe_BAO(z_SNe, z_BAO)
-    init_params = np.array([[-2, 0], [0, 0.6]])
-    params_dict = {'omm'     : [r'$\Omega_m$', 0.0, 1.0],
-                   'w'       : [r'$w$', np.nan, np.nan]}
+    model = Simulate_SNe_BAO(z_SNe, z_BAO)
+    params_dict = {'w'      : [r'$w$', np.nan, np.nan],
+                  'omm'     : [r'$\Omega_m$', 0.0, 1.0]}
     param_names = [key for key in params_dict.keys()]
+    init_params = np.array([[-2, 0], [0, 0.6]])
 
 Finally, we can build a predictor and pass the data and model instance to it to train the network::
 
