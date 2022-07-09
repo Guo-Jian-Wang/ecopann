@@ -40,10 +40,13 @@ Then a data sample can be simulated as observational data, by using the function
     import numpy as np
     import matplotlib.pyplot as plt
     
-    def get_data(x, a_fid, b_fid):
+    def get_data(x, a_fid, b_fid, random=False):
         y_th = SimLinear(x).sim_y([a_fid, b_fid])
         err_y = y_th * 0.05
-        y = y_th + np.random.randn(len(x))*err_y
+        if random:
+            y = y_th + np.random.randn(len(x))*err_y
+        else:
+            y = y_th
         sim_data = np.c_[x, y, err_y]
         return sim_data, y_th
     
