@@ -29,6 +29,7 @@ The main dependencies of ecopann are:
 
 * `PyTorch <https://pytorch.org/>`_
 * `CUDA <https://developer.nvidia.com/cuda-downloads>`_ (optional, but suggested)
+* `coplot <https://github.com/Guo-Jian-Wang/coplot>`_
 
 and some commonly used modules:
 
@@ -39,6 +40,7 @@ and some commonly used modules:
 * math
 * decimal
 * matplotlib
+* smt
 * logging
 * warnings
 * time
