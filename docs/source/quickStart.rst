@@ -83,7 +83,7 @@ Finally, we can build a predictor and pass the data and model instance to it to 
 
     import ecopann.ann as ann
     
-    stepStop_n = 3
+    stepStop_n = 6
     num_train = 1000
     epoch = 1000
 
@@ -241,7 +241,7 @@ After that, we can build a model instance and make some settings for parameter i
 
 Finally, we can build a predictor and pass the data and model instance to it to train the network::
 
-    stepStop_n = 3
+    stepStop_n = 5
     num_train = 1000
     epoch = 1000
     
