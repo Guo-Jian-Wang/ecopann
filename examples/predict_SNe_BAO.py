@@ -3,7 +3,7 @@
 import sys
 sys.path.append('..')
 import ecopann.ann as ann
-import ecopann.coplot.plot_contours as plc
+import coplot.plot_contours as plc
 import ecopann.cosmic_params as cosmic_params
 import simulator
 import matplotlib.pyplot as plt
@@ -24,7 +24,7 @@ params_dict = {'omm'     : [r'$\Omega_m$', 0.3, 0.0, 1.0],
 
 
 # %% estimate parameters using ECoPANN
-randn_num = '1.14058'; steps_n = 8 #train1k, epoch1k
+randn_num = ; steps_n = 8
 
 
 predictor = ann.RePredict([sim_mu, sim_Hz, sim_DA], cov_matrix=None, path='SNe_BAO',

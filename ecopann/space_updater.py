@@ -367,8 +367,8 @@ class UpdateParameterSpace(CheckParameterSpace):
     chain_0 : None or array-like, optional
         The ANN chain of the (i-1)-th step, where :math:`i\geq2`, if step :math:`\leq2`, ``chain_0`` should be set to None, 
         otherwise, ``chain_0`` should be an array. Default: None
-    init_params_space : None or array-like
-        The initial settings of the parameter space. If ``chain_0`` is given, ``init_params_space`` will be ignored. Default: None
+    init_params : None or array-like
+        The initial settings of the parameter space. If ``chain_0`` is given, ``init_params`` will be ignored. Default: None
     spaceSigma : int or array-like, optional
         The size of parameter space to be learned. It is a int or a numpy array with shape of (n,), where n is the number of parameters, 
         e.g. for spaceSigma=5, the parameter space to be learned is :math:`[-5\sigma, +5\sigma]`. Default: 5
@@ -376,13 +376,13 @@ class UpdateParameterSpace(CheckParameterSpace):
         Information of cosmological parameters that include the labels, the minimum values, 
         and the maximum values. See :func:`~.cosmic_params.params_dict_zoo`. Default: None
     """
-    def __init__(self, step, param_names, chain_1, chain_0=None, init_params_space=None, spaceSigma=5, params_dict=None):
+    def __init__(self, step, param_names, chain_1, chain_0=None, init_params=None, spaceSigma=5, params_dict=None):
         self.step = self._step(step)
         self.param_names = param_names
         self.params_limit = cosmic_params.ParamsProperty(param_names, params_dict=params_dict).params_limit
         self.chain_1 = self._chain_1(chain_1)
         self.chain_0 = chain_0
-        self.init_params_space = init_params_space
+        self.init_params = init_params
         if type(spaceSigma) is int:
             self.spaceSigma = np.array([spaceSigma for i in range(len(param_names))])
         else:
@@ -406,7 +406,7 @@ class UpdateParameterSpace(CheckParameterSpace):
     def param_devs(self):
         if self.step==2:
             if self.chain_0 is None:
-                dev = abs((np.mean(self.init_params_space, axis=1) - self.best_1) / self.best_1)
+                dev = abs((np.mean(self.init_params, axis=1) - self.best_1) / self.best_1)
                 dev = [round(i, 4) for i in dev]
                 return dev
             else:
@@ -419,7 +419,7 @@ class UpdateParameterSpace(CheckParameterSpace):
         if self.step==2:
             if self.chain_0 is None:
                 #here we assume initial parameter space is [-5\sigma, +5\sigma]
-                err_0 = (np.mean(self.init_params_space, axis=1) - self.init_params_space[:,0])/5.0
+                err_0 = (np.mean(self.init_params, axis=1) - self.init_params[:,0])/5.0
                 dev = abs((self.sigma_mean_1 - err_0) / err_0)
                 dev = [round(i, 4) for i in dev]
                 return dev

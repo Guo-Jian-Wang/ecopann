@@ -65,28 +65,28 @@ Then a data sample can be simulated as observational data, by using the function
 After that, we can build a model instance and make some settings for parameter initialization::
 
     model = SimLinear(x)
-    params_dict = {'a' : [r'$a$', 1.5, np.nan, np.nan],
-                   'b' : [r'$b$', 2.5, 0, 10]}
+    params_dict = {'a' : [r'$a$', np.nan, np.nan],
+                   'b' : [r'$b$', 0, 10]}
     param_names = [key for key in params_dict.keys()]
     init_params = np.array([[0, 5], [1, 3]])
 
-where ``params_dict`` is a dictionary that contains information of the parameters, which include the labels, the base values, the minimum values, and the maximum values, and ``init_params`` is the initial settings of the parameter space.
+where ``params_dict`` is a dictionary that contains information of the parameters, which include the labels and physical limits, and ``init_params`` is the initial settings of the parameter space.
 
 .. Note::
-    If the extremum of parameters (the minimum and maximum values) is unknown or there is no extremum, it should be set to
+    If the physical limits of parameters (the minimum and maximum values) is unknown or there is no physical limits, it should be set to
     ``np.nan``.
 
 Finally, we can build a predictor and pass the data and model instance to it to train the network::
 
     import ecopann.ann as ann
     
-    steps_n = 8
+    stepStop_n = 3
     num_train = 1000
     epoch = 1000
 
     predictor = ann.ANN(sim_data, model, param_names, params_dict=params_dict,
                         cov_matrix=None, init_params=init_params, epoch=epoch,
-                        num_train=num_train, local_samples=None, steps_n=steps_n)
+                        num_train=num_train, local_samples=None, stepStop_n=stepStop_n)
 
     predictor.train(path='linear')
 
@@ -109,8 +109,7 @@ and can also plot the contours of the estimated parameters::
     :scale: 35 %
 
 .. Note::
-    The parameters are estimated using the chains after the burn-in phase, so the ``steps_n`` should be set large enough, and
-    the ``init_params`` should also be set large enough to contain the true parameters.
+    The parameters are estimated using the chains after the burn-in phase, and the ``stepStop_n`` is the number of chains to be obtained.
     
     Also, the number of the training set (``num_train``) and the ``epoch`` should be set large enough to ensure the network
     learns a reliable mapping. See the ``ecopann.ann.ANN`` module in :ref:`parameter_estimation` for details.
@@ -118,9 +117,10 @@ and can also plot the contours of the estimated parameters::
 In the training process, the results of each step will be saved, so it is possible to estimate parameters before the ending of the training process. To do this, one needs to build another predictor and pass the random number of the first step (``randn_num``) that identifies the saved results to the predictor::
 
     import ecopann.cosmic_params as cosmic_params
-    import ecopann.coplot.plot_contours as plc
+    import coplot.plot_contours as plc
     
-    randn_num = '1.06304'; steps_n = 8
+    # randn_num and steps_n should be replaced by your values 
+    randn_num = 1.06304; steps_n = 4
     
     predictor = ann.RePredict(sim_data, cov_matrix=None, path='linear',
                               randn_num=randn_num, steps_n=steps_n,
@@ -232,19 +232,19 @@ After that, we can build a model instance and make some settings for parameter i
 
     model = simulator.Simulate_SNe_BAO(z_SNe, z_BAO)
     init_params = np.array([[-2, 0], [0, 0.6]])
-    params_dict = {'omm'     : [r'$\Omega_m$', 0.3, 0.0, 1.0],
-                   'w'       : [r'$w$', -1, np.nan, np.nan]}
+    params_dict = {'omm'     : [r'$\Omega_m$', 0.0, 1.0],
+                   'w'       : [r'$w$', np.nan, np.nan]}
     param_names = [key for key in params_dict.keys()]
 
 Finally, we can build a predictor and pass the data and model instance to it to train the network::
 
-    steps_n = 8
+    stepStop_n = 3
     num_train = 1000
     epoch = 1000
     
     predictor = ann.ANN([sim_mu, sim_Hz, sim_DA], model, param_names, params_dict=params_dict,
                         cov_matrix=None, init_params=init_params, epoch=epoch,
-                        num_train=num_train, local_samples=None, steps_n=steps_n)
+                        num_train=num_train, local_samples=None, stepStop_n=stepStop_n)
     
     predictor.train(path='SNe_BAO')
     chain_ann = predictor.chain_ann

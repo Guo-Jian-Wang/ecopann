@@ -8,9 +8,6 @@ import numpy as np
 import torch
 import time
 
-"""
-this file should be updated !!!
-"""
 
 #%% ANN
 class ANN(plotter.PlotPosterior):
@@ -37,8 +34,8 @@ class ANN(plotter.PlotPosterior):
         If there is no covariance for some observations, the covariance matrix should be set to None. e.g. [cov_matrix_1, None, cov_matrix_3]. Default: None
     init_chain : array-like, optional
         The initial ANN or MCMC chain, which is usually based on prvious parameter estimation. Default: None
-    init_params_space : array-like, optional
-        The initial settings of the parameter space. If ``init_chain`` is given, ``init_params_space`` will be ignored. Default: None
+    init_params : array-like, optional
+        The initial settings of the parameter space. If ``init_chain`` is given, ``init_params`` will be ignored. Default: None
     hidden_layer : int, optional
         The number of the hidden layer of the network (for a single branch network). Default: 3
     branch_hiddenLayer : int, optional
@@ -57,7 +54,7 @@ class ANN(plotter.PlotPosterior):
         The size of parameter space to be learned. It is a int or a numpy array with shape of (n,), where n is the number of parameters, 
         e.g. for spaceSigma=5, the parameter space to be learned is :math:`[-5\sigma, +5\sigma]`. Default: 5
     space_type : str, optional
-        The type of parameter space. It can be 'hypercube', 'LHS', 'hypersphere', 'hyperellipsoid', or 'posterior_hyperellipsoid'. Default: 'hypercube'
+        The type of parameter space. It can be 'hypercube', 'LHS', 'hypersphere', 'hyperellipsoid', or 'posterior_hyperellipsoid'. Default: 'hyperellipsoid'
     local_samples : None, str, or list, optional
         Path of local samples, None, or 'sample' or ['sample'] or ['sample_1', 'sample_2', ...].
         If None, no local samples are used. Default: None
@@ -88,7 +85,7 @@ class ANN(plotter.PlotPosterior):
         The type of Gaussian noise added to the training set, 'singleNormal' or 'multiNormal'. Default: 'multiNormal'
     factor_sigma : float, optional
         For the case of 'singleNormal', it is the factor of the observational error (standard deviation), 
-        while for the case of 'multiNormal' it is the standard deviation of the coefficient of the observational error (standard deviation). Default: 0.5
+        while for the case of 'multiNormal' it is the standard deviation of the coefficient of the observational error (standard deviation). Default: 0.2
     multi_noise : int, optional
         The number of realization of noise added to a spectrum. Default: 5
     scale_spectra : bool, optional
@@ -133,9 +130,9 @@ class ANN(plotter.PlotPosterior):
     
     Local samples can be used as training set to save time, so when using this method, you can generate a sample library for later reuse.    
     """
-    def __init__(self, obs_data, model, param_names, params_dict=None, cov_matrix=None, init_chain=None, init_params_space=None,
+    def __init__(self, obs_data, model, param_names, params_dict=None, cov_matrix=None, init_chain=None, init_params=None,
                  hidden_layer=3, branch_hiddenLayer=2, trunk_hiddenLayer=1, epoch=2000, epoch_branch=2000,
-                 num_train=3000, num_vali=500, spaceSigma=5, space_type='hypercube', local_samples=None, stepStop_n=3):
+                 num_train=3000, num_vali=500, spaceSigma=5, space_type='hyperellipsoid', local_samples=None, stepStop_n=3):
         #observational data & cosmological model
         self.obs_data = obs_data
         self.model = model
@@ -143,7 +140,7 @@ class ANN(plotter.PlotPosterior):
         self.params_dict = params_dict
         self.cov_matrix = cov_matrix
         self.init_chain = init_chain
-        self.init_params_space = self._init_params_space(init_params_space)
+        self.init_params = self._init_params(init_params)
         #ANN model
         self.hidden_layer = hidden_layer
         self.activation_func = 'rrelu'
@@ -167,7 +164,7 @@ class ANN(plotter.PlotPosterior):
         self.local_samples = local_samples
         #data preprocessing
         self.noise_type = 'multiNormal'
-        self.factor_sigma = 0.5
+        self.factor_sigma = 0.2
         self.multi_noise = 5
         self.scale_spectra = True
         self.scale_params = True
@@ -184,7 +181,7 @@ class ANN(plotter.PlotPosterior):
         self.stepStop_n = stepStop_n
         self.expectedBurnIn_step = 10
         self.chain_leng = 10000
-    
+        
     @property
     def obs_variables(self):
         if self.branch_n==1:
@@ -224,7 +221,7 @@ class ANN(plotter.PlotPosterior):
     def base_epoch(self):
         return self.epoch//2
     
-    def _init_params_space(self, prior):
+    def _init_params(self, prior):
         if prior is None:
             prior = np.array([[-100, 100] for i in range(len(self.param_names))])
         params_limit = cosmic_params.ParamsProperty(self.param_names, params_dict=self.params_dict).params_limit
@@ -254,12 +251,12 @@ class ANN(plotter.PlotPosterior):
         else:
             return np.copy(self.cov_matrix)
     
-    def save_variables(self, path='ann', sample=None):
+    def save_variables(self, sample=None):
         if sample is None:
             fileName = 'variables_%s'%self.randn_num
         else:
             fileName = 'variables-%s_%s'%(sample, self.randn_num)
-        utils.savenpy(path+'/variables', fileName, self.obs_variables, dtype=self.obs_dtype)
+        utils.savenpy(self.path+'/variables', fileName, self.obs_variables, dtype=self.obs_dtype)
 
     def simulate(self, step=1, burn_in=False, burnIn_step=None, space_type_all=[], prev_space=None,
                  chain_all=[], sim_spectra=None, sim_params=None):
@@ -274,7 +271,8 @@ class ANN(plotter.PlotPosterior):
                 if self.space_type=='hypersphere' or self.space_type=='hyperellipsoid' or self.space_type=='posterior_hyperellipsoid':
                     s_type = 'hypercube'
                     # s_type = 'LHS' #test
-                    self.factor_sigma_i = 0.4 #test, 0.5, 0.4, 0.35
+                    # self.factor_sigma_i = 0.4 #test, 0.5, 0.4, 0.35
+                    self.factor_sigma_i = self.factor_sigma
                 else:
                     s_type = self.space_type
                     self.factor_sigma_i = self.factor_sigma
@@ -284,11 +282,11 @@ class ANN(plotter.PlotPosterior):
             space_type_all.append(s_type)
             print('\n'+'#'*25+' step {} '.format(step)+'#'*25)
             if self.branch_n==1:
-                simor = ds.SimSpectra(training_n, self.model, self.param_names, chain=self.init_chain, params_space=self.init_params_space, 
+                simor = ds.SimSpectra(training_n, self.model, self.param_names, chain=self.init_chain, params_space=self.init_params, 
                                       spaceSigma=self.spaceSigma, params_dict=self.params_dict, space_type=s_type, 
                                       cut_crossedLimit=True, local_samples=self.local_samples, prevStep_data=None)
             else:
-                simor = ds.SimMultiSpectra(self.branch_n, training_n, self.model, self.param_names, chain=self.init_chain, params_space=self.init_params_space, 
+                simor = ds.SimMultiSpectra(self.branch_n, training_n, self.model, self.param_names, chain=self.init_chain, params_space=self.init_params, 
                                            spaceSigma=self.spaceSigma, params_dict=self.params_dict, space_type=s_type, 
                                            cut_crossedLimit=True, local_samples=self.local_samples, prevStep_data=None)
             sim_spectra, sim_params = simor.simulate()
@@ -298,7 +296,7 @@ class ANN(plotter.PlotPosterior):
                 chain_0 = self.init_chain
             elif step>=3:
                 chain_0 = chain_all[-2]
-            updater = su.UpdateParameterSpace(step,self.param_names,chain_all[-1],chain_0=chain_0,init_params_space=self.init_params_space,spaceSigma=self.spaceSigma,params_dict=self.params_dict)
+            updater = su.UpdateParameterSpace(step,self.param_names,chain_all[-1],chain_0=chain_0,init_params=self.init_params,spaceSigma=self.spaceSigma,params_dict=self.params_dict)
             if updater.small_dev(limit_dev=0.001):
                 #to be improved to get chain_ann after exit()???, or remove these two lines???
                 exit()
@@ -389,8 +387,8 @@ class ANN(plotter.PlotPosterior):
         return sim_spectra, sim_params, burn_in, burnIn_step, space_type_all, prev_space
     
     def _train(self, sim_spectra, sim_params, step=1, burn_in=False, burnIn_step=None, 
-               randn_num=0.123, path='ann', sample=None, save_items=True, 
-               showIter_n=100, pred_epoch=100, miniStepStop_n=3):
+               randn_num=0.123, sample=None, save_items=True, 
+               showIter_n=100):
         if burn_in:
             idx = np.random.choice(self.num_train+self.num_vali, self.num_train+self.num_vali, replace=False)
             if self.branch_n==1:
@@ -407,11 +405,11 @@ class ANN(plotter.PlotPosterior):
             train_set = [sim_spectra, sim_params]
             vali_set = [None, None]
         if self.branch_n==1:
-            self.eco = models.OneBranchMLP(train_set, self.param_names, vali_set=vali_set, obs_errors=self.obs_errors, cov_matrix=self.cov_copy,
+            self.eco = models.OneBranchMLP(train_set, self.param_names, vali_set=vali_set, obs_errors=self.obs_errors, cov_matrix=self.cov_copy, params_dict=self.params_dict,
                                            hidden_layer=self.hidden_layer, activation_func=self.activation_func, loss_func='L1',
                                            noise_type=self.noise_type, factor_sigma=self.factor_sigma_i, multi_noise=self.multi_noise)
         else:
-            self.eco = models.MultiBranchMLP(train_set, self.param_names, vali_set=vali_set, obs_errors=self.obs_errors, cov_matrix=self.cov_copy,
+            self.eco = models.MultiBranchMLP(train_set, self.param_names, vali_set=vali_set, obs_errors=self.obs_errors, cov_matrix=self.cov_copy, params_dict=self.params_dict,
                                              branch_hiddenLayer=self.branch_hiddenLayer, trunk_hiddenLayer=self.trunk_hiddenLayer, activation_func=self.activation_func, loss_func='L1',
                                              noise_type=self.noise_type, factor_sigma=self.factor_sigma_i, multi_noise=self.multi_noise)
         self.eco.lr = self.lr
@@ -438,11 +436,11 @@ class ANN(plotter.PlotPosterior):
         self.eco.randn_num = randn_num
         
         if self.branch_n==1:
-            self.eco.train(repeat_n=self.repeat_n, showIter_n=showIter_n, pred_epoch=pred_epoch, miniStepStop_n=miniStepStop_n)
+            self.eco.train(repeat_n=self.repeat_n, showIter_n=showIter_n)
         else:
             self.eco.lr_branch = self.lr
             self.eco.epoch_branch = self.epoch_branch
-            self.eco.train(repeat_n=self.repeat_n, train_branch=self.train_branch, parallel=False, showIter_n=showIter_n, pred_epoch=pred_epoch, miniStepStop_n=miniStepStop_n) #reset parallel???
+            self.eco.train(repeat_n=self.repeat_n, train_branch=self.train_branch, parallel=False, showIter_n=showIter_n) #reset parallel???
         
         #predict chain
         #Note: here use self.cov_copy is to avoid data type error in "eco"
@@ -452,14 +450,14 @@ class ANN(plotter.PlotPosterior):
         #save results
         if save_items:
             sample_i = '%s_step%s'%(sample, step) if sample is not None else None
-            self.eco.save_net(path=path, sample=sample_i)
-            self.eco.save_loss(path=path, sample=sample_i)
-            self.eco.save_chain(path=path, sample=sample_i)            
-            self.eco.save_hparams(path=path, sample=sample_i)
+            self.eco.save_net(path=self.path, sample=sample_i)
+            self.eco.save_loss(path=self.path, sample=sample_i)
+            self.eco.save_chain(path=self.path, sample=sample_i)            
+            self.eco.save_hparams(path=self.path, sample=sample_i)
         return chain_1
     
     # to be updated, add stop_step_n ???
-    def train(self, path='ann', sample=None, save_items=True, showIter_n=100, pred_epoch=100, miniStepStop_n=3):
+    def train(self, path='ann', sample=None, save_items=True, showIter_n=100):
         """Train the network and save the results.
         
         Parameters
@@ -472,27 +470,22 @@ class ANN(plotter.PlotPosterior):
             If True, results will be saved to disk, otherwise, results will not be saved
         showIter_n : int, optional
             The number of iterations interval for printing. Default: 100
-        pred_epoch : int, optional
-            The number of epoch that predicts the chain of parameters. Default: 100
-        miniStepStop_n : int, optional
-            If the number of mini-steps after mini-burn-in reached miniStepStop_n, it will stop the training of the network corresponding to the current step.
-            This only works before burn_in. Default: 3
         
         Returns
         -------
         list
             A list of chains.
         """
+        self.path = path
         #should the parameter sample above be changed ???
-        #change Default settings of miniStepStop_n???
         randn_nums = self._randn_nums()
         
         #logs & variables
         if save_items:
             # logName = 'log_%s'%(str(randn_nums[0]).split('.')[-1])
             logName = 'log_%s'%(randn_nums[0])
-            utils.logger(path=path+'/logs', fileName=logName)
-            self.save_variables(path=path, sample=sample)
+            utils.logger(path=self.path+'/logs', fileName=logName)
+            self.save_variables(sample=sample)
             print('randn_num: %s'%randn_nums[0])
         
         if self.set_numpySeed:
@@ -513,8 +506,8 @@ class ANN(plotter.PlotPosterior):
             
             #training
             chain_1 = self._train(self.sim_spectra, self.sim_params, step=step, burn_in=burn_in, burnIn_step=self.burnIn_step, 
-                                  randn_num=randn_nums[step-1], path=path, sample=sample, save_items=save_items, 
-                                  showIter_n=showIter_n, pred_epoch=pred_epoch, miniStepStop_n=miniStepStop_n)
+                                  randn_num=randn_nums[step-1], sample=sample, save_items=save_items, 
+                                  showIter_n=showIter_n)
             self.chain_all.append(chain_1)
             
             #test
@@ -531,17 +524,10 @@ class ANN(plotter.PlotPosterior):
         else:
             return self.chain_all[self.burnIn_step:]
     
-    #updated
     @property
     def chain_ann(self):
         """Combined ANN chain using the result of steps after burn-in.
         """
-        # _chains_good = self.chains_good
-        # chain_comb = _chains_good[0]
-        # if len(_chains_good)>1:
-        #     for i in range(len(_chains_good)-1):
-        #         chain_comb = np.r_[chain_comb, _chains_good[i+1]]
-        # return chain_comb
         return np.concatenate(self.chains_good, axis=0)
 
     @property
@@ -550,7 +536,6 @@ class ANN(plotter.PlotPosterior):
 
 
 #%% repredict
-#to be updated
 class RePredict(plotter.PlotPosterior):
     """Reanalysis using the saved chains or the well-trained networks.
     
@@ -576,12 +561,6 @@ class RePredict(plotter.PlotPosterior):
     
     Attributes
     ----------
-    norm_inputs : bool, optional
-        If True, the input data of the network will be normalized. Default: True
-    norm_target : bool, optional
-        If True, the target data (cosmological parameters) will be normalized. Default: True
-    norm_type : str, optional
-        The method of normalization, 'z_score', 'minmax', or 'mean' (see :class:`~.data_processor.Normalize`). Default: 'z_score'
     chain_leng : int, optional
         The number of samples to be generated by a network model when predicting ANN chain, which is equal to the length of the ANN chain. Default: 10000
     """
@@ -594,9 +573,6 @@ class RePredict(plotter.PlotPosterior):
         self.randn_nums = [str(Decimal(str(randn_num)) + Decimal(str(i))) for i in range(steps_n)]
         self.steps_n = steps_n
         self.params_dict = params_dict
-        # self.norm_inputs = True
-        # self.norm_target = True
-        # self.norm_type = 'z_score'
         self.chain_leng = 10000
         if self.branch_n==1:
             self.eco = models.RePredictOBMLP(path=path)
@@ -655,6 +631,7 @@ class RePredict(plotter.PlotPosterior):
             self.eco.randn_num = self.randn_nums[i]
             self.eco.load_chain()
             self.eco.load_hparams()
+            self.eco.load_loss()
             self.chain_all.append(self.eco.chain)
             if self.eco.burnIn_step is not None:
                 self.chains_good.append(self.eco.chain)
@@ -676,23 +653,18 @@ class RePredict(plotter.PlotPosterior):
             self.eco.randn_num = self.randn_nums[i]
             self.eco.load_net()
             self.eco.load_hparams()
+            self.eco.load_loss()
             self.eco.predict_chain(self.obs_data, cov_matrix=self.cov_copy, chain_leng=self.chain_leng)
             self.chain_all.append(self.eco.chain)
             if self.eco.burnIn_step is not None:
                 self.chains_good.append(self.eco.chain)
     
-    #updated
     @property
     def chain_ann(self):
         """Combined ANN chain using the result of steps after burn-in.
         """
         if len(self.chains_good)==0:
             raise ValueError('The number of steps is too small to find the Burn-In step and good chains!')
-        # chain_comb = self.chains_good[0]
-        # if len(self.chains_good)>1:
-        #     for i in range(len(self.chains_good)-1):
-        #         chain_comb = np.r_[chain_comb, self.chains_good[i+1]]
-        # return chain_comb
         return np.concatenate(self.chains_good, axis=0)
     
     @property

@@ -3,7 +3,7 @@
 import os
 import sys
 sys.path.append('..')
-import ecopann.coplot.plot_contours as plc
+import coplot.plot_contours as plc
 import ecopann.cosmic_params as cosmic_params
 import ecopann.ann as ann
 import simulator
@@ -27,23 +27,22 @@ z_BAO = sim_Hz[:,0]
 
 
 #%% cosmic model & initial parameters
-param_names = ['w', 'omm']
 model = simulator.Simulate_SNe_BAO(z_SNe, z_BAO)
-
+params_dict = {'w'       : [r'$w$', np.nan, np.nan],
+               'omm'     : [r'$\Omega_m$', 0.0, 1.0]}
+param_names = [key for key in params_dict.keys()]
 init_params = np.array([[-2, 0], [0, 0.6]])
-params_dict = {'omm'     : [r'$\Omega_m$', 0.3, 0.0, 1.0],
-               'w'       : [r'$w$', -1, np.nan, np.nan]}
 
 
 #%% estimate parameters using ECoPANN
-steps_n = 8
+stepStop_n = 3 #3
 num_train = 1000 #3000
 epoch = 1000 #2000
 
 
 predictor = ann.ANN([sim_mu, sim_Hz, sim_DA], model, param_names, params_dict=params_dict,
                     cov_matrix=None, init_params=init_params, epoch=epoch,
-                    num_train=num_train, local_samples=None, steps_n=steps_n)
+                    num_train=num_train, local_samples=None, stepStop_n=stepStop_n)
 
 predictor.train(path='SNe_BAO')
 chain_ann = predictor.chain_ann
@@ -53,13 +52,13 @@ predictor.plot_contours(fill_contours=False, show_titles=True)
 predictor.save_steps()
 predictor.save_contours()
 
+predictor.eco.plot_loss()
 
 #%%
 labels = cosmic_params.ParamsProperty(param_names, params_dict=params_dict).labels
 plc.Contours(chain_ann).plot(bins=100,smooth=5,labels=labels,fill_contours=False,show_titles=True,
-                             best_values=fid_params,show_best_value_lines=True)
+                              best_values=fid_params,show_best_value_lines=True)
 
 
-#%%
 plt.show()
 

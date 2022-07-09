@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*-
-
-# import sys
-# sys.path.append('../../../..')
-# import pycode.coplot_master.coplot.plot_settings as pls
-
 import coplot.plot_settings as pls
 
 from . import data_processor as dp
 from . import data_simulator as ds
 from . import space_updater as su
-# from . import train, evaluate, optimize, fcnet, nodeframe, utils, cosmic_params, conv_fc
 from . import train, evaluate, optimize, fcnet, nodeframe, utils, cosmic_params
 
 import torch
@@ -284,7 +278,7 @@ class OneBranchMLP(train.Train, dp.ParamsScaling, ds.CutParams):
             params = self.inverseScaling(params)
         return params
     
-    def train(self, repeat_n=3, showIter_n=100, pred_epoch=100, miniStepStop_n=3):
+    def train(self, repeat_n=3, showIter_n=100):
         """Train the network
 
         Parameters
@@ -293,11 +287,6 @@ class OneBranchMLP(train.Train, dp.ParamsScaling, ds.CutParams):
             The number of repeat feed to the network for each batch size data, which will increase the number of iterations in each epoch. Default: 3
         showIter_n : int, optional
             The number of epoch that show the training information. Default: 100
-        pred_epoch : int, optional
-            The number of epoch that predicts the chain of parameters. Default: 100
-        miniStepStop_n : int, optional
-            If the number of mini-steps after mini-burn-in reached miniStepStop_n, it will stop the training of the network corresponding to the current step.
-            This only works before burn_in. Default: 3
 
         Returns
         -------
@@ -307,7 +296,6 @@ class OneBranchMLP(train.Train, dp.ParamsScaling, ds.CutParams):
             The loss.
         """
         # change showIter_n to showEpoch_n???
-        #pred_epoch and miniStepStop_n will be removed?
         self._net()
         if self.transfer_learning:
             self.copyLayers_fromTrainedNet()
@@ -330,12 +318,6 @@ class OneBranchMLP(train.Train, dp.ParamsScaling, ds.CutParams):
                 
         self.train_loss = []
         self.vali_loss = []
-        # self.chain_all = []
-        # miniBurn_in = False
-        # self.miniBurnIn_step = None
-        # miniStep = 1
-        # self.param_devs = np.array([]) #test
-        # self.error_devs = np.array([]) #test
         # np.random.seed(1000)#
         print('randn_num: %s'%self.randn_num)
         for subsample_num in range(1, self.epoch+1):
@@ -365,36 +347,6 @@ class OneBranchMLP(train.Train, dp.ParamsScaling, ds.CutParams):
             lrdc = optimize.LrDecay(subsample_num,iteration=self.epoch,lr=self.lr,lr_min=self.lr_min)
             self.optimizer.param_groups[0]['lr'] = lrdc.exp()
 
-            # #prediction, updated, remove?
-            # if subsample_num%pred_epoch==0:
-            #     _chain = self.predict_chain(self.obs_data, cov_matrix=self.cov_matrix, chain_leng=1000, use_GPU=True)
-            #     self.chain_all.append(_chain)
-            #     self.net.train()
-            #     miniStep += 1
-            #     #compare from step 2, here miniStep start from 3 is due to settings in UpdateParameterSpace
-            #     if miniStep>=3:
-            #         updater = su.UpdateParameterSpace(miniStep,self.param_names,self.chain_all[-1],chain_0=self.chain_all[-2],init_params_space=None,spaceSigma=None,params_dict=self.params_dict)
-            #         # if updater.small_dev(limit_dev=0.001):
-            #         #     exit()
-            #         self.param_devs = np.r_[self.param_devs, max(updater.param_devs)]
-            #         self.error_devs = np.r_[self.error_devs, max(updater.error_devs)]
-            #         if self.miniBurnIn_step is None and max(updater.param_devs)<0.25 and max(updater.error_devs)<0.25:
-            #             miniBurn_in = True
-            #             self.miniBurnIn_step = miniStep - 1 #the good chain will not contain burn-in step chain!
-            #             print('-'*66)
-            #             if self.miniBurnIn_step>=10:
-            #                 print('*'*1+' '*19+'Mini-Burn-In epoch: %s'%(self.miniBurnIn_step*pred_epoch)+' '*21+'*'*1)
-            #             else:
-            #                 print('*'*1+' '*19+'Mini-Burn-In epoch: %s'%(self.miniBurnIn_step*pred_epoch)+' '*22+'*'*1)
-            #             print('*'*1+' '*11+'The parameters have reached stable values'+' '*12+'*'*1)
-            #             print('*'*1+' '*1+'The chains of later epochs can be used for parameter inference'+' '*1+'*'*1)
-            #             print('-'*66)
-            
-            # #for burn_in=False
-            # if not self.burn_in:
-            #     if miniBurn_in and miniStep-1-self.miniBurnIn_step==miniStepStop_n:
-            #         break
-            
         if self.use_multiGPU:
             self.net = self.net.module.cpu()
         else:
@@ -463,19 +415,6 @@ class OneBranchMLP(train.Train, dp.ParamsScaling, ds.CutParams):
         params = self.predict(sim_spectra, use_GPU=use_GPU, in_type='torch')
         return params
     
-    # @property
-    # def chains_good(self):
-    #     if self.miniBurnIn_step is None:
-    #         raise ValueError('The number of steps is too small to find the Burn-In step and good chains!')
-    #     else:
-    #         return self.chain_all[self.miniBurnIn_step:]
-    
-    # @property
-    # def chain_ann(self):
-    #     """Combined ANN chain using the result of steps after burn-in.
-    #     """
-    #     return np.concatenate(self.chains_good, axis=0)
-    
     def save_net(self, path='ann', sample=None):
         if sample is None:
             fileName = 'net_train%s_batch%s_epoch%s_%s.pt'%(len(self.params),self.batch_size,self.epoch,self.randn_num)
@@ -505,9 +444,6 @@ class OneBranchMLP(train.Train, dp.ParamsScaling, ds.CutParams):
         utils.savenpy(path+'/hparams', fileName, [self.spectra_statistic, self.params_statistic, self.spectra_base, self.params_base, self.param_names, self.params_dict,
                                                   self.scale_spectra, self.scale_params, self.norm_inputs, self.norm_target, self.independent_norm, self.norm_type, 
                                                   self.burnIn_step])
-    
-    # def plot_loss(self):
-    #     evaluate.plot_loss(self.train_loss, vali_loss=self.vali_loss)
     
     def plot_loss(self, alpha=0.6, show_logLoss=False):
         vali_loss_size = len(self.vali_loss)
@@ -1584,204 +1520,4 @@ class MultiDataSetMLP(OneBranchMLP):
         self.chain = self.predict(obs_best_multi, in_type='torch')
         self.chain = self.cut_params(self.chain) #remove non-physical parameters
         return self.chain
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#%% further plans !!!???
-class OneBranchCNN(OneBranchMLP):
-    def __init__(self, maps, parameters, param_names, obs_errors=None, cov_matrix=None,
-                 channels=[8,16,32], kernels_size=3, strides=2, extra_pads=None, nside=512, fc_hidden=3, 
-                 activation_func='rrelu', pool='None', pool_ks=9, dropout='None', loss_func='L1', 
-                 noise_type='multiNormal', factor_sigma=0.5, multi_noise=5, 
-                 sphericalCNN=False, use_skipConnect=False, randomField=False, map_size=None):
-        #data
-        self.spectra = maps
-        self.params = parameters
-        self.params_base = np.mean(parameters, axis=0)
-        self.param_names = param_names
-        self.params_n = len(param_names)
-        self.obs_errors = obs_errors
-        self.cholesky_factor = self._cholesky_factor(cov_matrix)
-        #ANN model
-        self.channels = channels
-        self.kernels_size = kernels_size
-        self.strides = strides
-        self.extra_pads = extra_pads
-        self.nside = nside #to be updated, change name???
-        self.fc_hidden = fc_hidden
-        self.activation_func = activation_func
-        self.pool = pool
-        self.pool_ks = pool_ks
-        self.dropout = dropout
-        self.loss_func = train.loss_funcs(name=loss_func) #train.Train should be updated
-        self.lr = 1e-2
-        self.lr_min = 1e-8
-        self.batch_size = 750
-        self.auto_batchSize = True
-        self.epoch = 2000
-        self.base_epoch = 1000
-        self.auto_epoch = True
-        self.fix_initialize = False
-        self.print_info = False
-        self.sphericalCNN = sphericalCNN
-        self.use_skipConnect = use_skipConnect
-        self.randomField = randomField
-        self.map_size = map_size
-        #data preprocessing
-        self.noise_type = noise_type
-        self.factor_sigma = factor_sigma
-        self.multi_noise = multi_noise
-        self.scale_params = True
-        self.norm_inputs = True
-        self.norm_target = True
-        self.independent_norm = False
-        self.norm_type = 'z_score'
-        #training
-        self.spaceSigma_min = 5
-        self.auto_repeat_n = False
-        self.burn_in = False
-        self.burnIn_step = None
-        self.transfer_learning = False
-        self.randn_num = round(abs(np.random.randn()/5.), 5)
-        
-        
-    def _net(self):
-        if self.fix_initialize:
-            torch.manual_seed(1000) #Fixed parameter initialization
-        self.node_out = self.params.shape[1]
-        self.data_dim = len(self.spectra.shape) - 2
-        if self.sphericalCNN:
-            if self.randomField:
-                self.net = conv_fc.ConvFc_randomField(channels=self.channels, kernels_size=self.kernels_size, strides=self.strides, nside=self.nside,
-                                                      node_out=self.node_out, fc_hidden=self.fc_hidden, activation_func=self.activation_func, 
-                                                      pool=self.pool, pool_ks=self.pool_ks, dropout=self.dropout, data_dim=self.data_dim,
-                                                      map_size=self.map_size)
-            else:
-                self.net = conv_fc.ConvFc_sphere(channels=self.channels, kernels_size=self.kernels_size, strides=self.strides, nside=self.nside,
-                                                 node_out=self.node_out, fc_hidden=self.fc_hidden, activation_func=self.activation_func, 
-                                                 pool=self.pool, pool_ks=self.pool_ks, dropout=self.dropout, data_dim=self.data_dim)
-        else:
-            if self.use_skipConnect:
-                self.net = conv_fc.ConvFc_skipConnect(channels=self.channels, kernels_size=self.kernels_size, strides=self.strides, side=self.nside,
-                                                      node_out=self.node_out, fc_hidden=self.fc_hidden, activation_func=self.activation_func, 
-                                                      pool=self.pool, dropout=self.dropout, data_dim=self.data_dim)
-            else:
-                self.net = conv_fc.ConvFc(channels=self.channels, kernels_size=self.kernels_size, strides=self.strides, extra_pads=self.extra_pads, side=self.nside,
-                                          node_out=self.node_out, fc_hidden=self.fc_hidden, activation_func=self.activation_func, 
-                                          pool=self.pool, dropout=self.dropout, data_dim=self.data_dim)
-        if self.print_info:
-            print(self.net)
-    
-
-    #test
-    def transfer_inputs_target(self):
-        if self.use_GPU:
-            self.inputs = dp.numpy2cuda(self.inputs)
-            self.target = dp.numpy2cuda(self.target)
-        else:
-            self.inputs = dp.numpy2torch(self.inputs)
-            self.target = dp.numpy2torch(self.target)
-    
-    #do not add noise
-    def train_noNoise(self, repeat_n=3, showIter_n=100):
-        self._net()
-        if self.transfer_learning:
-            self.copyLayers_fromTrainedNet()
-        self.transfer_net()
-        
-        self.optimizer = self._optimizer(name='Adam')
-        
-        if self.auto_batchSize:
-            self._auto_batchSize()
-        self._check_batchSize()
-        # print('batch size: %s'%self.batch_size)
-        if self.auto_epoch:
-            self._auto_epoch()
-        if self.auto_repeat_n:
-            repeat_n = self._auto_repeat_n(repeat_n)
-        self.iteration = self.multi_noise*len(self.spectra)//self.batch_size * repeat_n
-        
-        self.statistic()
-        self.transfer_data()
-                
-        self.loss = []
-        # np.random.seed(1000)#
-        print('randn_num: %s'%self.randn_num)
-        for subsample_num in range(1, self.epoch+1):
-            # self.inputs, self.target = ds.AddGaussianNoise(self.spectra,params=self.params,obs_errors=self.obs_errors,cholesky_factor=self.cholesky_factor,noise_type=self.noise_type,factor_sigma=self.factor_sigma,multi_noise=self.multi_noise,use_GPU=self.use_GPU).multiNoisySample(reorder=True)
-            
-            # test
-            # self.inputs, self.target = self.spectra.clone(), self.params.clone()
-            self.inputs, self.target = self.spectra, self.params.clone()
-            # self.transfer_inputs_target() #test
-            
-            
-            if self.norm_inputs:
-                self.inputs = dp.Normalize(self.inputs, self.spectra_statistic, norm_type=self.norm_type).norm()
-            if self.norm_target:
-                if self.independent_norm:
-                    for i in range(self.params_n):
-                        self.target[:,i] = dp.Normalize(self.target[:,i], self.params_statistic[i], norm_type=self.norm_type).norm()
-                else:
-                    self.target = dp.Normalize(self.target, self.params_statistic, norm_type=self.norm_type).norm()
-
-            _, loss_ = self.train_1(self.inputs, self.target, repeat_n=1, set_seed=False, lr_decay=False, print_info=False)            
-            self.loss += loss_
-            if subsample_num%showIter_n==0:
-                print('(epoch:%s/%s; loss:%.5f; lr:%.8f)'%(subsample_num, self.epoch, loss_[-1], self.optimizer.param_groups[0]['lr']))
-            lrdc = optimize.LrDecay(subsample_num,iteration=self.epoch,lr=self.lr,lr_min=self.lr_min)
-            self.optimizer.param_groups[0]['lr'] = lrdc.exp()
-        
-        if self.use_GPU:
-            if self.use_multiGPU:
-                self.net = self.net.module.cpu()
-            else:
-                self.net = self.net.cpu()
-        self.loss = np.array(self.loss)
-        return self.net, self.loss
-
-    def save_net(self, path='ann', sample=None, middle_save=False):
-        if sample is None:
-            fileName = 'net_train%s_batch%s_epoch%s_%s.pt'%(len(self.params),self.batch_size,self.epoch,self.randn_num)
-        else:
-            fileName = 'net-%s_train%s_batch%s_epoch%s_%s.pt'%(sample,len(self.params),self.batch_size,self.epoch,self.randn_num)
-        if middle_save:
-            if self.use_multiGPU:
-                utils.saveTorchPt(path+'/net', fileName, self.net.module.cpu()) ##
-            else:
-                utils.saveTorchPt(path+'/net', fileName, self.net.cpu()) ##
-            self.net.cuda() ##
-        else:
-            utils.saveTorchPt(path+'/net', fileName, self.net)
-            
-
-class RePredictOBCNN(RePredictOBMLP):
-    """Repredict cosmological parameters using the saved networks.
-    
-    Parameters
-    ----------
-    path : str
-        The path of the results saved. Default: 'ann'
-    randn_num : str or int
-        A random number that identifies the saved results.
-
-    """
-    def __init__(self, path='ann', randn_num='0.123'):
-        self.path = path
-        self.randn_num = str(randn_num)
-    
 

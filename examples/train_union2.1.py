@@ -3,7 +3,7 @@
 import os
 import sys
 sys.path.append('..')
-import ecopann.coplot.plot_contours as plc
+import coplot.plot_contours as plc
 import ecopann.cosmic_params as cosmic_params
 import ecopann.ann as ann
 import simulator
@@ -28,14 +28,14 @@ model = simulator.Simulate_mu(obs_z)
 
 
 #%% estimate parameters using ECoPANN
-steps_n = 8
-num_train = 3000 #3000
-epoch = 2000 #2000
+stepStop_n = 3 #3
+num_train = 1000 #3000
+epoch = 1000 #2000
 
 
 predictor = ann.ANN(union, model, param_names, params_dict=simulator.params_dict,
                     cov_matrix=None, init_params=init_params, epoch=epoch,
-                    num_train=num_train, local_samples=None, steps_n=steps_n)
+                    num_train=num_train, local_samples=None, stepStop_n=stepStop_n)
 
 predictor.train(path='union2.1_fwCDM')
 chain_ann = predictor.chain_ann
@@ -45,6 +45,7 @@ predictor.plot_contours(fill_contours=False, show_titles=True)
 predictor.save_steps()
 predictor.save_contours()
 
+predictor.eco.plot_loss()
 
 # %% MCMC chain
 chain_mcmc = np.load('data/MCMC_chains/chain_fwCDM_2params.npy')

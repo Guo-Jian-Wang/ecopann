@@ -3,7 +3,7 @@
 import sys
 sys.path.append('..')
 import ecopann.ann as ann
-import ecopann.coplot.plot_contours as plc
+import coplot.plot_contours as plc
 import ecopann.cosmic_params as cosmic_params
 import simulator
 import matplotlib.pyplot as plt
@@ -15,8 +15,7 @@ union = np.loadtxt('data/Union2.1.txt')[:,:3]
 
 
 # %% estimate parameters using ECoPANN
-# randn_num = '1.29357'; steps_n = 8 #train1k, epoch1k
-randn_num = '1.10315'; steps_n = 8 #train3k, epoch2k
+randn_num = ; steps_n = 4
 
 
 predictor = ann.RePredict(union, cov_matrix=None, path='union2.1_fwCDM',
@@ -31,6 +30,7 @@ predictor.plot_contours(fill_contours=False, show_titles=True)
 predictor.save_steps()
 predictor.save_contours()
 
+predictor.eco.plot_loss()
 
 #%%
 chain_mcmc = np.load('data/MCMC_chains/chain_fwCDM_2params.npy')

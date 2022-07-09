@@ -19,37 +19,41 @@ class SimLinear(object):
     def simulate(self, sim_params):
         return self.x, self.sim_y(sim_params)
 
-def get_data(x, a_fid, b_fid):
+def get_data(x, a_fid, b_fid, random=True):
     y_th = SimLinear(x).sim_y([a_fid, b_fid])
     err_y = y_th * 0.05
-    y = y_th + np.random.randn(len(x))*err_y
+    if random:
+        y = y_th + np.random.randn(len(x))*err_y
+    else:
+        y = y_th
     sim_data = np.c_[x, y, err_y]
     return sim_data, y_th
 
 
 #%%
 # params_dict
-"""Information of cosmological parameters that include the labels, the base values, 
-the minimum values, and the maximum values: [label, base value, minimum, maximum]
-
-The label is used to plot figures, the general value is used for data normalization when training the network,
-the extremum of parameters is used to update parameter space in the training process.
-
-Note: if the extremum of parameters is unknown or there is no extremum, it should be set to np.nan
 """
-params_dict = {'H0'      : [r'$H_0$', 70.0, np.nan, np.nan], #the Hubble constant
-               'omm'     : [r'$\Omega_m$', 0.3, 0.0, 1.0], #the matter density parameter
-               'ombh2'   : [r'$\Omega_b h^2$', 0.02222, np.nan, np.nan], #baryon density
-               'omch2'   : [r'$\Omega_c h^2$', 0.1197, np.nan, np.nan], #cold dark matter density
-               'tau'     : [r'$\tau$', 0.078, 0.003, 0.45], #the optical depth
-               'As'      : [r'$A_s$', 2.195511e-9, np.nan, np.nan], #the amplitude of primordial inflationary perturbations
-               'A'       : [r'$10^9A_s$', 2.195511, np.nan, np.nan], #As/10^-9
-               'ns'      : [r'$n_s$', 0.9655, np.nan, np.nan], #the spectral index of primordial inflationary perturbations
-               'w'       : [r'$w$', -1, np.nan, np.nan], #parameter of wCDM model
-               'oml'     : [r'$\Omega_\Lambda$', 0.7, 0.0, 1.0], #\Omega_\Lambda, 1-Omega_m-Omega_k
+Information of cosmological parameters that include the labels and physical limits: [label, limit_min, limit_max]
+    
+The label is used to plot figures. 
+The physical limits are used to ensure that the simulated parameters have physical meaning.
+    
+Note: If the physical limits of parameters is unknown or there is no physical limits, it should be set to np.nan.
+"""
+params_dict = {'H0'      : [r'$H_0$', np.nan, np.nan], #the Hubble constant
+               'omm'     : [r'$\Omega_{\rm m}$', 0.0, 1.0], #the matter density parameter
+               'ombh2'   : [r'$\Omega_{\rm b} h^2$', np.nan, np.nan], #baryon density
+               'omch2'   : [r'$\Omega_{\rm c} h^2$', np.nan, np.nan], #cold dark matter density
+               'tau'     : [r'$\tau$', 0.003, np.nan], #the optical depth
+               'As'      : [r'$A_{\rm s}$', np.nan, np.nan], #the amplitude of primordial inflationary perturbations
+               'A'       : [r'$10^9A_{\rm s}$', np.nan, np.nan], #As/10^-9
+               'ns'      : [r'$n_{\rm s}$', np.nan, np.nan], #the spectral index of primordial inflationary perturbations
+               'mnu'     : [r'$\sum m_\nu$', 0.0, np.nan], #the sum of neutrino masses, eV, #Note: here we set it to 1 to avoid be scaled when training the network
+               'w'       : [r'$w$', np.nan, np.nan], #parameter of wCDM model
+               'oml'     : [r'$\Omega_\Lambda$', 0.0, 1.0], #\Omega_\Lambda, 1-Omega_m-Omega_k
                
-               'MB'      : [r'$M_B$', -19.3, np.nan, np.nan], #the absolute magnitude of SNe Ia (M_B)
-               'mu0'     : [r'$\mu_0$', 23.8, np.nan, np.nan], #MB + 5*log10(c/H0) + 25
+               'MB'      : [r'$M_B$', np.nan, np.nan], #the absolute magnitude of SNe Ia (M_B)
+               'muc'     : [r'$\mu_c$', np.nan, np.nan], #5*log10(c/H0/Mpc) + MB + 25
                }
 
 

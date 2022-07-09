@@ -1,11 +1,4 @@
 # -*- coding: utf-8 -*-
-
-
-# import sys
-# sys.path.append('../../../..')
-# import pycode.coplot_master.coplot.plots as pl
-# import pycode.coplot_master.coplot.plot_contours as plc
-
 import coplot.plots as pl
 import coplot.plot_contours as plc
 
