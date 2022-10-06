@@ -50,6 +50,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon', #suport NumPy & Google Docstrings
+    'sphinx_search.extension',
 ]
 
 napoleon_include_init_with_doc = False
