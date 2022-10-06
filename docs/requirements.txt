@@ -4,4 +4,3 @@ scipy
 matplotlib
 coplot
 smt
-readthedocs-sphinx-search
