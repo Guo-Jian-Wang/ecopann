@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import coplot.plot_settings as pls
-
 from . import data_processor as dp
 import os
 from torch.autograd import Variable
-import numpy  as np
-import matplotlib.pyplot as plt
 
 
 #%% get file path
