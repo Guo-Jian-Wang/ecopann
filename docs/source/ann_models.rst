@@ -11,14 +11,6 @@ ecopann.element
     :undoc-members:
     :show-inheritance:
 
-ecopann.hpmodel
----------------
-
-.. automodule:: ecopann.hpmodel
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 ecopann.nodeframe
 -----------------
 
